@@ -1,4 +1,5 @@
 'use client';
+import Footer from '@/app/components/Footer';
 import Header from '@/app/components/Header';
 import SearchBar from '@/app/components/SearchBar';
 
@@ -36,10 +37,8 @@ export default function JobPortfolioSite() {
           {/* 他の求人カードもここに追加可能 */}
         </section>
       </main>
-
-      <footer className="mt-8 bg-blue-800 py-4 text-center text-white">
-        © 2025 求人ポートフォリオサイト
-      </footer>
+       <Footer/>
     </div>
+   
   );
 }
