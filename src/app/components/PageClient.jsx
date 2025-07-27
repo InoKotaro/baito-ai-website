@@ -1,13 +1,12 @@
 'use client';
-
+import Header from '@/app/components/Header';
 import SearchBar from '@/app/components/SearchBar';
 
 export default function JobPortfolioSite() {
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-800">
-      <header className="bg-blue-800 px-6 py-4 text-center text-lg font-bold text-white">
-        求人ポートフォリオサイト
-      </header>
+    <div className="min-h-screen bg-gray-100 text-gray-700">
+      {/* ヘッダー */}
+      <Header />
 
       <main className="mx-auto mt-8 max-w-4xl px-4">
         {/* 検索セクション */}
