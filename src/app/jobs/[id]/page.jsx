@@ -1,3 +1,4 @@
+'use client';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 
@@ -7,16 +8,20 @@ import { jobs } from '@/data/siteData';
 
 // 求人データをIDで検索するヘルパー関数
 const getJobById = (id) => {
-  // URLのパラメータは文字列なので数値に変換します
+  // URLパラメータ文字列を数値に変換
   const numericId = parseInt(id, 10);
   return jobs.find((job) => job.id === numericId);
+};
+
+const handleApplyClick = (e, jobId) => {
+  router.push(`/apply/${jobId}`);
 };
 
 export default function JobDetailPage({ params }) {
   const { id } = params;
   const job = getJobById(id);
 
-  // IDに対応する求人が見つからない場合は404ページを表示
+  // IDに対応する求人がない際は404ページを表示
   if (!job) {
     notFound();
   }
@@ -51,7 +56,7 @@ export default function JobDetailPage({ params }) {
             </div>
           </div>
           <div>
-            <h2 className="mb-4 border-b pb-2 text-2xl font-semibold">
+            <h2 className="mb-4 border-b pb-3 text-2xl font-semibold">
               仕事内容
             </h2>
             <p className="whitespace-pre-line text-gray-700">
@@ -60,8 +65,11 @@ export default function JobDetailPage({ params }) {
           </div>
 
           <div className="mt-6 flex justify-center">
-            <button className="rounded-lg bg-orange-500 px-8 py-3 font-bold text-white transition-colors hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-opacity-75">
-              この求人に応募する
+            <button
+              onClick={(e) => handleApplyClick(e, job.id)}
+              className="rounded-lg bg-orange-500 px-8 py-4 font-bold text-white transition-colors hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-opacity-75"
+            >
+              応募する
             </button>
           </div>
         </article>
