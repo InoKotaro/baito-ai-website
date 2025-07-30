@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
+import { use } from 'react';
 
 import ApplyButton from '@/app/components/ApplyButton';
 import Footer from '@/app/components/Footer';
@@ -14,7 +15,7 @@ const getJobById = (id) => {
 };
 
 export default function JobDetailPage({ params }) {
-  const { id } = params;
+  const { id } = use(params);
   const job = getJobById(id);
 
   // IDに対応する求人がない際は404ページを表示

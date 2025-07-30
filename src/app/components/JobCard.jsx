@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+import LinkApplyButton from '@/app/components/ApplyButton';
 import { jobs } from '@/data/siteData.jsx';
 
 export default function JobCard() {
@@ -41,13 +42,9 @@ export default function JobCard() {
                 勤務時間: {job.hours}
               </p>
             </div>
+
             <div className="ml-auto flex items-end self-stretch">
-              <button
-                onClick={(e) => handleApplyClick(e, job.id)}
-                className="rounded-lg bg-orange-500 px-8 py-4 font-bold text-white transition-colors hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-opacity-75"
-              >
-                応募する
-              </button>
+              <LinkApplyButton jobId={job.id} />
             </div>
           </article>
         </Link>
