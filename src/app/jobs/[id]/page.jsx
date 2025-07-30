@@ -1,7 +1,7 @@
-'use client';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 
+import ApplyButton from '@/app/components/ApplyButton';
 import Footer from '@/app/components/Footer';
 import Header from '@/app/components/Header';
 import { jobs } from '@/data/siteData';
@@ -11,10 +11,6 @@ const getJobById = (id) => {
   // URLパラメータ文字列を数値に変換
   const numericId = parseInt(id, 10);
   return jobs.find((job) => job.id === numericId);
-};
-
-const handleApplyClick = (e, jobId) => {
-  router.push(`/apply/${jobId}`);
 };
 
 export default function JobDetailPage({ params }) {
@@ -65,12 +61,7 @@ export default function JobDetailPage({ params }) {
           </div>
 
           <div className="mt-6 flex justify-center">
-            <button
-              onClick={(e) => handleApplyClick(e, job.id)}
-              className="rounded-lg bg-orange-500 px-8 py-4 font-bold text-white transition-colors hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-opacity-75"
-            >
-              応募する
-            </button>
+            <ApplyButton jobId={job.id} />
           </div>
         </article>
       </main>

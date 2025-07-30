@@ -33,7 +33,7 @@ export default function ApplyPage({ params }) {
                 src={job.image}
                 alt={job.title}
                 fill
-                className="rounded-md object-cover"
+                className="rounded-md object-contain"
               />
             </div>
             <div>
@@ -47,9 +47,11 @@ export default function ApplyPage({ params }) {
             </div>
           </div>
 
-          <p className="mb-8">上記の内容で応募します。よろしいですか？</p>
+          <p className="mb-8 text-center">
+            上記の内容で応募します。よろしいですか？
+          </p>
 
-          <div className="flex justify-end gap-4">
+          <div className="flex justify-center gap-4">
             <button className="rounded-lg bg-gray-300 px-8 py-3 font-bold text-gray-800 transition-colors hover:bg-gray-400">
               戻る
             </button>
