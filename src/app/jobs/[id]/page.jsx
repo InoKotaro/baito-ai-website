@@ -27,7 +27,7 @@ export default function JobDetailPage({ params }) {
       <main className="mx-auto mt-8 w-full max-w-4xl flex-grow px-4">
         <article className="rounded-lg bg-white p-8 shadow-md">
           <div className="mb-6 flex flex-col items-start gap-6 md:flex-row">
-            <div className="relative h-48 w-full flex-shrink-0 md:w-72">
+            <div className="relative h-48 w-72 flex-shrink-0 md:w-72">
               <Image
                 src={job.image}
                 alt={job.title}
@@ -57,6 +57,12 @@ export default function JobDetailPage({ params }) {
             <p className="whitespace-pre-line text-gray-700">
               {job.description}
             </p>
+          </div>
+
+          <div className="mt-6 flex justify-center">
+            <button className="rounded-lg bg-orange-500 px-8 py-3 font-bold text-white transition-colors hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-opacity-75">
+              この求人に応募する
+            </button>
           </div>
         </article>
       </main>
