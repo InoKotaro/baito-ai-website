@@ -6,11 +6,11 @@ import SearchBar from '@/app/components/SearchBar';
 
 export default function JobPortfolioSite() {
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-700">
+    <div className="flex min-h-screen flex-col bg-gray-100 text-gray-700">
       {/* ヘッダー */}
       <Header />
 
-      <main className="mx-auto mt-8 max-w-4xl px-4">
+      <main className="mx-auto mt-8 w-full max-w-4xl flex-grow px-4">
         {/* 検索セクション */}
         <SearchBar />
 
