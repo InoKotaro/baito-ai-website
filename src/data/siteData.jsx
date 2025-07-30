@@ -1,7 +1,7 @@
 export const jobs = [
   {
     id: 1,
-    iamge: '',
+    image: '/image/convenience.jpg',
     title: '【コンビニスタッフ】株式会社フレッシュ365',
     summary: 'コンビニでの接客やレジ、商品補充の仕事です。',
     description: `レジ対応や商品の陳列、清掃などを行います。
