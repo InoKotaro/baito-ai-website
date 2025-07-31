@@ -16,7 +16,7 @@ export default function Header() {
         </Link>
 
         <nav>
-          <ul className="flex items-center gap-6 text-md font-bold">
+          <ul className="text-md flex items-center gap-6 font-bold">
             <li>
               <Link href="/" className="text-gray-600 hover:text-orange-500">
                 ホーム
@@ -39,7 +39,10 @@ export default function Header() {
               </Link>
             </li>
             <li>
-              <button type="button" className="text-gray-600 hover:text-orange-500">
+              <button
+                type="button"
+                className="text-gray-600 hover:text-orange-500"
+              >
                 ログアウト
               </button>
             </li>
