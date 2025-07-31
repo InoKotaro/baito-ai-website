@@ -5,7 +5,9 @@ import { useRouter } from 'next/navigation';
 export default function ApplyButton({ jobId }) {
   const router = useRouter();
 
-  const handleApplyClick = () => {
+  const handleApplyClick = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
     router.push(`/apply/${jobId}`);
   };
 
