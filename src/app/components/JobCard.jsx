@@ -7,20 +7,12 @@ import LinkApplyButton from '@/app/components/ApplyButton';
 import { jobs } from '@/data/siteData.jsx';
 
 export default function JobCard() {
-  const router = useRouter();
-
-  const handleApplyClick = (e, jobId) => {
-    e.preventDefault(); // Linkのデフォルト動作をキャンセル
-    e.stopPropagation(); // 親要素へのイベント伝播を停止
-    router.push(`/apply/${jobId}`);
-  };
-
   return (
     <section aria-label="求人一覧">
       {jobs.map((job) => (
         <Link key={job.id} href={`/jobs/${job.id}`} className="block">
           <article className="mb-6 flex cursor-pointer items-start gap-6 rounded-lg bg-white p-6 shadow-md transition-shadow hover:shadow-lg">
-            <div className="relative h-40 w-72 flex-shrink-0">
+            <div className="relative h-48 w-72 flex-shrink-0">
               <Image
                 src={job.image}
                 alt={job.title}
