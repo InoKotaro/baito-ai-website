@@ -59,16 +59,18 @@ export default function NewsPage() {
                 </span>
               </button>
               <div
-                className={`overflow-hidden transition-all duration-700 ease-in-out ${
+                className={`grid transition-all duration-500 ease-in-out ${
                   openItemId === item.id
-                    ? 'max-h-96 opacity-100'
-                    : 'max-h-0 opacity-0'
+                    ? 'grid-rows-[1fr] opacity-100'
+                    : 'grid-rows-[0fr] opacity-0'
                 }`}
               >
-                <div className="px-6 pb-6">
-                  <p className="whitespace-pre-wrap text-gray-600">
-                    {item.description}
-                  </p>
+                <div className="overflow-hidden">
+                  <div className="px-6 pb-6">
+                    <p className="whitespace-pre-wrap text-gray-600">
+                      {item.description}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
