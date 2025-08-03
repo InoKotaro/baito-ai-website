@@ -36,13 +36,14 @@ export default function JobCard() {
             </p>
           </div>
 
-          <div className="ml-auto flex flex-col items-center justify-center gap-4 self-stretch md:pt-9">
+          <div className="ml-auto flex flex-col items-center justify-center gap-4 self-stretch md:pt-16">
             <Link
               href={`/jobs/${job.id}`}
               className="w-full rounded-lg bg-blue-500 px-4 py-2 text-center font-bold text-white transition-colors hover:bg-blue-600"
             >
               詳細を見る
             </Link>
+            {/* 応募ボタン */}
             <LinkApplyButton jobId={job.id} />
           </div>
         </article>

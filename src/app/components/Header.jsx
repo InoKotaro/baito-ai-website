@@ -24,7 +24,7 @@ export default function Header() {
             </li>
             <li>
               <Link
-                href="/notifications"
+                href="/news"
                 className="text-gray-600 hover:text-orange-500"
               >
                 お知らせ

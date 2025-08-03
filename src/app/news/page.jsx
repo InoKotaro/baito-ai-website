@@ -47,10 +47,9 @@ export default function NewsPage() {
                 onClick={() =>
                   setOpenItemId(openItemId === item.id ? null : item.id)
                 }
-                className="flex w-full cursor-pointer items-center justify-between p-6 text-left transition-colors hover:bg-gray-50"
+                className="flex w-full cursor-pointer items-center justify-between p-6 text-left transition-colors"
               >
                 <div>
-                  <p className="text-sm text-gray-500">{item.date}</p>
                   <h2 className="mt-2 text-xl font-semibold text-gray-700">
                     {item.title}
                   </h2>
