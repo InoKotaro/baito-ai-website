@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { use } from 'react';
 
 import ApplyButton from '@/app/components/ApplyButton';
+import BackButton from '@/app/components/BackButton';
 import Footer from '@/app/components/Footer';
 import Header from '@/app/components/Header';
 import { jobs } from '@/data/siteData';
@@ -37,7 +38,7 @@ export default function JobDetailPage({ params }) {
                 className="rounded-md object-contain"
               />
             </div>
-            <div className="flex-grow">
+            <div className="flex-grow md:mt-4">
               <h1 className="mb-2 text-2xl font-bold text-blue-800">
                 {job.title}
               </h1>
@@ -61,7 +62,8 @@ export default function JobDetailPage({ params }) {
             </p>
           </div>
 
-          <div className="mt-6 flex justify-center">
+          <div className="mt-6 flex justify-center gap-4">
+            <BackButton />
             <ApplyButton jobId={job.id} />
           </div>
         </article>

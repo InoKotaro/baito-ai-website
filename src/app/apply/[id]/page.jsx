@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 
+import BackButton from '@/app/components/BackButton';
 import Footer from '@/app/components/Footer';
 import Header from '@/app/components/Header';
 import { jobs } from '@/data/siteData';
@@ -52,9 +53,8 @@ export default function ApplyPage({ params }) {
           </p>
 
           <div className="flex justify-center gap-4">
-            <button className="rounded-lg bg-gray-300 px-8 py-3 font-bold text-gray-800 transition-colors hover:bg-gray-400">
-              戻る
-            </button>
+            {/* 戻るボタン */}
+            <BackButton />
             <button className="rounded-lg bg-orange-500 px-8 py-3 font-bold text-white transition-colors hover:bg-orange-600">
               応募を確定する
             </button>
