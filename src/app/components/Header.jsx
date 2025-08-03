@@ -7,7 +7,7 @@ export default function Header() {
       <div className="container mx-auto flex items-center justify-between px-6 py-4">
         <Link href="/" className="flex items-center gap-3">
           <Image
-            src="/image/BaitoAI-logo.png"
+            src="/images/BaitoAI-logo.png"
             alt="Baito AI ロゴ"
             width={150}
             height={40}

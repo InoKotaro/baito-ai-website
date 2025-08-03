@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import Footer from '@/app/components/Footer';
 import Header from '@/app/components/Header';
+import ScrollToTopButton from '@/app/components/ScrollToTopButton';
 
 const newsItems = [
   {
@@ -80,6 +81,8 @@ export default function NewsPage() {
 
       {/* フッター */}
       <Footer />
+
+      <ScrollToTopButton />
     </div>
   );
 }

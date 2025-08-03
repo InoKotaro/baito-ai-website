@@ -2,6 +2,7 @@
 import Footer from '@/app/components/Footer';
 import Header from '@/app/components/Header';
 import JobCard from '@/app/components/JobCard';
+import ScrollToTopButton from '@/app/components/ScrollToTopButton';
 import SearchBar from '@/app/components/SearchBar';
 
 export default function JobPortfolioSite() {
@@ -20,6 +21,8 @@ export default function JobPortfolioSite() {
 
       {/* フッター */}
       <Footer />
+      {/* トップへ戻るボタン */}
+      <ScrollToTopButton />
     </div>
   );
 }
