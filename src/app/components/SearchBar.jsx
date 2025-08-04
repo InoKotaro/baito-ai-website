@@ -1,7 +1,7 @@
 export default function SearchBar() {
   return (
     <section
-      className="mb-8 flex flex-wrap justify-center gap-4 rounded-md bg-white p-6 shadow"
+      className="flex flex-wrap justify-center gap-4 rounded-md bg-white p-6 shadow"
       aria-label="求人検索"
     >
       <div className="flex min-w-[120px] flex-col">

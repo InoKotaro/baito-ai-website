@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import Footer from '@/app/components/Footer';
 import Header from '@/app/components/Header';
@@ -7,12 +7,30 @@ import JobCard from '@/app/components/JobCard';
 import Pagination from '@/app/components/Pagination';
 import ScrollToTopButton from '@/app/components/ScrollToTopButton';
 import SearchBar from '@/app/components/SearchBar';
+import StickySearchBar from '@/app/components/StickySearchBar';
 import { jobs } from '@/data/siteData';
 
 export default function JobPortfolioSite() {
   const [currentPage, setCurrentPage] = useState(1);
   // 1ページ内表示件数
   const [jobsPerPage] = useState(3);
+
+  const [isSticky, setIsSticky] = useState(false);
+  const searchBarRef = useRef(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (searchBarRef.current) {
+        // 元の検索バーが画面上部から見えなくなったら、固定バーを表示
+        setIsSticky(window.scrollY > searchBarRef.current.offsetTop);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   // ページに表示する求人を計算
   const indexOfLastJob = currentPage * jobsPerPage;
@@ -33,9 +51,22 @@ export default function JobPortfolioSite() {
       {/* ヘッダー */}
       <Header />
 
+      {/* 固定表示用の検索バー */}
+      <div
+        className={`fixed left-0 right-0 top-0 z-30 bg-orange-50/95 shadow-md backdrop-blur-sm transition-opacity duration-300 ease-in-out ${
+          isSticky ? 'opacity-100' : 'pointer-events-none opacity-0'
+        }`}
+      >
+        <div className="mx-auto w-full max-w-4xl px-4 py-2">
+          <StickySearchBar />
+        </div>
+      </div>
+
       <main className="mx-auto mt-8 w-full max-w-4xl flex-grow px-4">
         {/* 検索セクション */}
-        <SearchBar />
+        <div ref={searchBarRef} className="mb-8">
+          <SearchBar />
+        </div>
 
         {/* 求人一覧 */}
         <JobCard jobs={currentJobs} />
