@@ -20,7 +20,7 @@ export default function ApplyPage({ params }) {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-100 text-gray-700">
+    <div className="flex min-h-screen flex-col bg-orange-50 text-gray-700">
       <Header />
       <main className="mx-auto mt-8 w-full max-w-4xl flex-grow px-4">
         <div className="rounded-lg bg-white p-8 shadow-md">

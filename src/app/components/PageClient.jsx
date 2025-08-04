@@ -29,7 +29,7 @@ export default function JobPortfolioSite() {
   const prevPage = () => paginate(currentPage - 1);
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-100 text-gray-700">
+    <div className="flex min-h-screen flex-col bg-orange-50 text-gray-700">
       {/* ヘッダー */}
       <Header />
 

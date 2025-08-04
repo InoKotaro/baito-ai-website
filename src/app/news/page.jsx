@@ -8,20 +8,17 @@ import ScrollToTopButton from '@/app/components/ScrollToTopButton';
 const newsItems = [
   {
     id: 1,
-    date: '202☓-10-27',
     title: '面接対策セミナーのアーカイブ配信開始',
     description: `面接対策セミナーのアーカイブを公開しました。
 準備のコツや質問対策を学べます。ぜひご活用ください。`,
   },
   {
     id: 2,
-    date: '202☓-10-20',
     title: '新規会員登録キャンペーン実施中',
     description: `新規会員登録をされた方の中から抽選で、Amazonギフト券500円分をプレゼント`,
   },
   {
     id: 3,
-    date: '202☓-09-15',
     title: '【重要】掲載されている求人ついて',
     description: `当サイトに掲載されている求人情報は、ポートフォリオ用サンプルデータです。
 応募しても企業から連絡は来ません。上記のアーカイブ、キャンペーンもございません。
@@ -33,7 +30,7 @@ export default function NewsPage() {
   const [openItemId, setOpenItemId] = useState(null);
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50">
+    <div className="flex min-h-screen flex-col bg-orange-50">
       {/* ヘッダー */}
       <Header />
 
