@@ -1,8 +1,8 @@
 export default function SearchBar() {
   return (
-    <section
-      className="flex flex-wrap justify-center gap-4 rounded-md bg-white p-6 shadow"
-      aria-label="求人検索"
+    <form
+      className="flex flex-wrap items-end justify-center gap-4 rounded-md bg-white p-6 shadow"
+      aria-label="求人検索フォーム"
     >
       <div className="flex min-w-[120px] flex-col">
         <label htmlFor="railway" className="mb-1 text-sm font-semibold">
@@ -11,7 +11,7 @@ export default function SearchBar() {
         <select
           id="railway"
           name="railway"
-          className="rounded border border-gray-300 px-2 py-1 text-base"
+          className="rounded border border-gray-300 px-2 py-2 text-base"
         >
           <option value="">選択してください</option>
           <option value="JR">JR線</option>
@@ -31,7 +31,7 @@ export default function SearchBar() {
           placeholder="1100"
           min="800"
           max="2000"
-          className="rounded border border-gray-300 px-2 py-1 text-base"
+          className="rounded border border-gray-300 px-2 py-2 text-base"
         />
       </div>
 
@@ -42,7 +42,7 @@ export default function SearchBar() {
         <select
           id="jobCategory"
           name="jobCategory"
-          className="rounded border border-gray-300 px-2 py-1 text-base"
+          className="rounded border border-gray-300 px-2 py-2 text-base"
         >
           <option value="">選択してください</option>
           <option value="convenience">コンビニスタッフ</option>
@@ -50,6 +50,14 @@ export default function SearchBar() {
           <option value="retail">販売スタッフ</option>
         </select>
       </div>
-    </section>
+
+      {/* 検索ボタン */}
+      <button
+        type="submit"
+        className="rounded-md bg-orange-500 px-8 py-2 font-bold text-white transition-colors hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-opacity-75"
+      >
+        検索
+      </button>
+    </form>
   );
 }
