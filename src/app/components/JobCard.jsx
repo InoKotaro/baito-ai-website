@@ -3,9 +3,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import LinkApplyButton from '@/app/components/ApplyButton';
-import { jobs } from '@/data/siteData.jsx';
 
-export default function JobCard() {
+export default function JobCard({ jobs }) {
   return (
     <section aria-label="求人一覧">
       {jobs.map((job) => (
