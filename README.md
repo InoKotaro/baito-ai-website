@@ -1,36 +1,109 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# バイトAI WEBサイト（ポートフォリオ）
 
-## Getting Started
+Next.js と Tailwind CSS を使い、求職者向けの求人サイトをイメージして開発しました。
+路線・職種・時給で絞り込みができ、応募フォームからそのまま応募も可能です。  
+応募履歴も見られる、**シンプルかつ実用的な UI** を意識しました。
 
-First, run the development server:
+## バイトAIについて
+
+当ポートフォリオで使用している職場風景の画像はGoogle DeepMind製画像生成AIツールWhiskで生成しています。
+AIが作った世界観という意味をこめて、「バイトAI」という名前にしました。
+
+---
+
+## デモサイト
+
+要記載
+
+---
+
+## 使用技術
+
+- Next.js 14（App Router）
+
+- React
+
+- Tailwind CSS
+
+- PostgreSQL（データベース）
+
+- Prisma（ORM）
+
+- NextAuth.js（認証機能：今後実装予定）
+
+- GitHub
+
+---
+
+## 主な機能
+
+- 求人一覧表示（ログイン不要・絞り込み対応）
+
+- 求人詳細ページ
+
+- 応募フォーム（DB保存）
+
+- 応募履歴ページ（ユーザー単位）
+
+- レスポンシブ対応（スマホ表示にも最適化）
+
+- 企業向け求人投稿機能（実装予定）
+
+---
+
+## ER図
+
+当サイトのデータ構造は以下のER図の通りです。
+
+要記載
+
+---
+
+## セットアップ方法
+
+### 1⃣ このリポジトリをクローン
+
+```bash
+git clone https://github.com/InoKotaro/ai-railway-website.git
+cd ai-railway-website
+```
+
+### 2⃣ 依存パッケージをインストール
+
+```bash
+npm install
+```
+
+### 3⃣ .env ファイルを作成し、以下の内容を記述
+
+## ユーザー登録があるためPWとか要書換え
+
+```bash
+DATABASE_URL=postgresql://your-db-user:password@localhost:5432/your-db-name
+NEXTAUTH_SECRET=your-secret
+NEXTAUTH_URL=http://localhost:3000
+```
+
+### 4⃣ Prisma マイグレーションを実行
+
+```bash
+npx prisma migrate dev --name init
+```
+
+### 5⃣ 開発サーバーを起動
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 6⃣ ブラウザでアクセス
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+`http://localhost:3000`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## こだわりポイント
 
-## Learn More
+- ディレクトリ構造やファイル分割により保守性を向上
 
-To learn more about Next.js, take a look at the following resources:
+- Tailwind CSS を使用
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- 応募データは PostgreSQL に保存
