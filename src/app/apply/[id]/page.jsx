@@ -1,5 +1,8 @@
+'use client';
+
 import Image from 'next/image';
-import { notFound } from 'next/navigation';
+import { notFound, useRouter } from 'next/navigation';
+import { use, useState } from 'react';
 
 import BackButton from '@/app/components/BackButton';
 import Footer from '@/app/components/Footer';
@@ -12,12 +15,24 @@ const getJobById = (id) => {
 };
 
 export default function ApplyPage({ params }) {
-  const { id } = params;
+  // 将来のバージョンに対応　＝＞　`params`を`React.use()`でラップ化
+  const { id } = use(params);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const router = useRouter();
   const job = getJobById(id);
 
   if (!job) {
     notFound();
   }
+
+  const handleApplyClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    router.push('/');
+  };
 
   return (
     <div className="flex min-h-screen flex-col bg-orange-50 text-gray-700">
@@ -55,12 +70,34 @@ export default function ApplyPage({ params }) {
           <div className="flex justify-center gap-4">
             {/* 戻るボタン */}
             <BackButton />
-            <button className="rounded-lg bg-orange-500 px-8 py-3 font-bold text-white transition-colors hover:bg-orange-600">
+            <button
+              onClick={handleApplyClick}
+              className="rounded-lg bg-orange-500 px-8 py-3 font-bold text-white transition-colors hover:bg-orange-600"
+            >
               応募を確定する
             </button>
           </div>
         </div>
       </main>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="w-full max-w-md rounded-lg bg-white p-8 text-center shadow-xl">
+            <h3 className="text-2xl font-bold text-blue-800">
+              応募が完了しました
+            </h3>
+            <p className="mb-6 mt-4">
+              ご応募ありがとうございました。採用担当者からの連絡をお待ちください。
+            </p>
+            <button
+              onClick={handleCloseModal}
+              className="rounded-lg bg-orange-500 px-8 py-3 font-bold text-white transition-colors hover:bg-orange-600"
+            >
+              トップページへ戻る
+            </button>
+          </div>
+        </div>
+      )}
       <Footer />
     </div>
   );
