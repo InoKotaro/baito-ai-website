@@ -59,47 +59,6 @@ AIが作った世界観という意味をこめて、「バイトAI」という�
 
 ---
 
-## セットアップ方法
-
-### 1⃣ このリポジトリをクローン
-
-```bash
-git clone https://github.com/InoKotaro/ai-railway-website.git
-cd ai-railway-website
-```
-
-### 2⃣ 依存パッケージをインストール
-
-```bash
-npm install
-```
-
-### 3⃣ .env ファイルを作成し、以下の内容を記述
-
-## ユーザー登録があるためPWとか要書換え
-
-```bash
-DATABASE_URL=postgresql://your-db-user:password@localhost:5432/your-db-name
-NEXTAUTH_SECRET=your-secret
-NEXTAUTH_URL=http://localhost:3000
-```
-
-### 4⃣ Prisma マイグレーションを実行
-
-```bash
-npx prisma migrate dev --name init
-```
-
-### 5⃣ 開発サーバーを起動
-
-```bash
-npm run dev
-```
-
-### 6⃣ ブラウザでアクセス
-
-`http://localhost:3000`
-
 ## こだわりポイント
 
 - ディレクトリ構造やファイル分割により保守性を向上
