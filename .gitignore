@@ -72,3 +72,5 @@ pgdata/
 coverage/
 *.local
 
+
+/src/generated/prisma

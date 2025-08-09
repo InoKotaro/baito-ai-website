@@ -108,7 +108,7 @@ export default function CreateJobPage() {
                 onChange={handleChange}
                 required
                 className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                placeholder="例：ホールスタッフ、キッチンスタッフ"
+                placeholder="例：【ホールスタッフ】"
               />
             </div>
 
@@ -125,7 +125,7 @@ export default function CreateJobPage() {
                 onChange={handleChange}
                 required
                 className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                placeholder="例：株式会社AIバイト"
+                placeholder="例：株式会社デリッシュAI"
               />
             </div>
 
@@ -161,7 +161,7 @@ export default function CreateJobPage() {
                 value={formData.details}
                 onChange={handleChange}
                 className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                placeholder="例：未経験者歓迎！シフトは週2日から相談OKです。美味しいまかない付き！"
+                placeholder="例：未経験者歓迎！シフトは週2日から相談可能です。美味しいまかない付き！"
               ></textarea>
             </div>
 

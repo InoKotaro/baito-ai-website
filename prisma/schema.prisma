@@ -1,0 +1,70 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int     @id @default(autoincrement())
+  name     String
+  email    String  @unique
+  password String
+  appliedJobs JobApplication[]
+}
+
+model Job {
+  id           Int        @id @default(autoincrement())
+  jobTitle     String     // 職種
+  companyName  String
+  jobRole      String     // 仕事内容
+  description  String     // 詳細
+  hourlyWage   Float      // 時給
+  imageUrl     String?    // 画像URL（オプショナル）
+  applicants   JobApplication[]  // 繰り返し応募防止
+
+  lineId       Int
+  line         Line       @relation(fields: [lineId], references: [id])
+
+  occupationId Int
+  occupation   Occupation @relation(fields: [occupationId], references: [id])
+}
+
+model JobApplication {　//応募履歴
+  id      Int    @id @default(autoincrement())
+  appliedAt DateTime @default(now())
+
+  userId  Int
+  user    User   @relation(fields: [userId], references: [id])
+
+  jobId   Int
+  job     Job    @relation(fields: [jobId], references: [id])
+
+  @@unique([userId, jobId]) // 同じ求人には1回しか応募できない
+}
+
+model Line {
+  id       Int    @id @default(autoincrement())
+  lineName String
+
+  jobs Job[]  // 逆向きリレーション
+}
+
+model Occupation {  //業種
+  id             Int    @id @default(autoincrement())
+  occupationName String
+
+  jobs Job[]  // 逆向きリレーション
+}
+
+model Company {  //企業ログイン用
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  password String
+}
