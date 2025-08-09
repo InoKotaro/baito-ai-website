@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { notFound, useRouter } from 'next/navigation';
+// `React.use()`でラップ化に必須
 import { use, useState } from 'react';
 
 import BackButton from '@/app/components/BackButton';
