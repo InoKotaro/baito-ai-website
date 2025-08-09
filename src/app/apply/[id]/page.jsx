@@ -87,7 +87,9 @@ export default function ApplyPage({ params }) {
               応募が完了しました
             </h3>
             <p className="mb-6 mt-4">
-              ご応募ありがとうございました。採用担当者からの連絡をお待ちください。
+              ご応募ありがとうございました。
+              <br />
+              採用担当者からの連絡をお待ちください。
             </p>
             <button
               onClick={handleCloseModal}
