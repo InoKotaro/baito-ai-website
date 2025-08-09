@@ -4,45 +4,54 @@ import Link from 'next/link';
 
 import LinkApplyButton from '@/app/components/ApplyButton';
 
+// 画像が設定されていない場合の代替画像のパス
+const FALLBACK_IMAGE_URL = '/images/no-image.jpg';
+
 export default function JobCard({ jobs }) {
   return (
     <section aria-label="求人一覧">
       {jobs.map((job) => (
         <article
           key={job.id}
-          className="mb-6 flex items-start gap-6 rounded-lg bg-white p-6 shadow-md"
+          className="mb-6 flex flex-col items-start gap-6 rounded-lg bg-white p-6 shadow-md md:flex-row"
         >
-          <div className="relative h-48 w-72 flex-shrink-0">
+          <div className="relative h-48 w-full flex-shrink-0 md:w-72">
             <Image
-              src={job.image}
-              alt={job.title}
+              src={job.imageUrl || FALLBACK_IMAGE_URL}
+              alt={job.jobTitle}
               fill
-              className="rounded-md object-contain"
+              className="rounded-md object-cover"
             />
           </div>
-          <div className="flex-grow md:pt-5">
+          <div className="flex-grow md:pt-1">
+            <p className="mb-2 text-sm text-gray-500">
+              {/* 関連データが存在する場合のみ安全に表示 */}
+              {[job.occupation?.occupationName, job.line?.lineName]
+                .filter(Boolean)
+                .join(' / ')}
+            </p>
             <h2 className="mb-1 text-2xl font-bold text-blue-800">
-              {job.title}
+              {job.jobTitle}
             </h2>
-            <h2 className="text-1xl mb-1 font-bold text-blue-800">
-              {job.company}
-            </h2>
-            <p className="mb-2 font-semibold">{job.summary}</p>
-            <p className="text-sm">
-              時給: {job.wage}
-              <br />
-              勤務時間: {job.hours}
+            <h3 className="text-1xl mb-2 font-bold text-gray-700">
+              {job.companyName}
+            </h3>
+            <p className="mb-4 font-semibold text-gray-700">{job.jobRole}</p>
+            <p className="text-lg font-bold text-red-600">
+              時給: {job.hourlyWage?.toLocaleString() ?? 'N/A'}円～
+            </p>
+            <p className="text-lg font-bold text-blue-800">
+              勤務時間: {job.workingHours ?? 'N/A'}
             </p>
           </div>
 
-          <div className="ml-auto flex flex-col items-center justify-center gap-4 self-stretch md:pt-16">
+          <div className="ml-auto flex w-full flex-col items-center justify-center gap-4 self-stretch md:w-auto md:pt-16">
             <Link
               href={`/jobs/${job.id}`}
               className="w-full rounded-lg bg-blue-500 px-4 py-2 text-center font-bold text-white transition-colors hover:bg-blue-600"
             >
               詳細を見る
             </Link>
-            {/* 応募ボタン */}
             <LinkApplyButton jobId={job.id} />
           </div>
         </article>

@@ -3,7 +3,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -27,16 +26,17 @@ model Job {
   description  String     // 詳細
   hourlyWage   Float      // 時給
   imageUrl     String?    // 画像URL（オプショナル）
+  workingHours String     // 労働時間
   applicants   JobApplication[]  // 繰り返し応募防止
 
   lineId       Int
   line         Line       @relation(fields: [lineId], references: [id])
 
-  occupationId Int
+  occupationId Int  //業種
   occupation   Occupation @relation(fields: [occupationId], references: [id])
 }
 
-model JobApplication {　//応募履歴
+model JobApplication {   //応募履歴
   id      Int    @id @default(autoincrement())
   appliedAt DateTime @default(now())
 
@@ -49,12 +49,23 @@ model JobApplication {　//応募履歴
   @@unique([userId, jobId]) // 同じ求人には1回しか応募できない
 }
 
-model Line {
-  id       Int    @id @default(autoincrement())
-  lineName String
+model RailwayCompany {   //1側
+  id    Int    @id @default(autoincrement())
+  name  String
 
-  jobs Job[]  // 逆向きリレーション
+  lines Line[]  // 逆向きリレーション
 }
+
+model Line {   //多側
+  id               Int             @id @default(autoincrement())
+  lineName         String
+
+  railwayCompanyId Int
+  railwayCompany   RailwayCompany  @relation(fields: [railwayCompanyId], references: [id])
+
+  jobs             Job[]           // 逆向きリレーション
+}
+
 
 model Occupation {  //業種
   id             Int    @id @default(autoincrement())

@@ -8,16 +8,39 @@ import Pagination from '@/app/components/Pagination';
 import ScrollToTopButton from '@/app/components/ScrollToTopButton';
 import SearchBar from '@/app/components/SearchBar';
 import StickySearchBar from '@/app/components/StickySearchBar';
-import { jobs } from '@/data/siteData';
 
 export default function JobPortfolioSite() {
+  const [allJobs, setAllJobs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   // 1ページ内表示件数
   const [jobsPerPage] = useState(3);
 
   const [isSticky, setIsSticky] = useState(false);
   const searchBarRef = useRef(null);
 
+  // APIから求人データを非同期で取得
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const res = await fetch('/api/jobs');
+        if (!res.ok) {
+          throw new Error('求人情報の取得に失敗しました。');
+        }
+        const data = await res.json();
+        setAllJobs(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchJobs();
+  }, []);
+
+  // スクロールイベントの処理
   useEffect(() => {
     const handleScroll = () => {
       if (searchBarRef.current) {
@@ -35,7 +58,7 @@ export default function JobPortfolioSite() {
   // ページに表示する求人を計算
   const indexOfLastJob = currentPage * jobsPerPage;
   const indexOfFirstJob = indexOfLastJob - jobsPerPage;
-  const currentJobs = jobs.slice(indexOfFirstJob, indexOfLastJob);
+  const currentJobs = allJobs.slice(indexOfFirstJob, indexOfLastJob);
 
   // ページを変更する関数（ページトップへのスクロール機能付き）
   const paginate = (pageNumber) => {
@@ -68,18 +91,24 @@ export default function JobPortfolioSite() {
           <SearchBar />
         </div>
 
-        {/* 求人一覧 */}
-        <JobCard jobs={currentJobs} />
-
-        {/* ページネーション */}
-        <Pagination
-          jobsPerPage={jobsPerPage}
-          totalJobs={jobs.length}
-          paginate={paginate}
-          currentPage={currentPage}
-          nextPage={nextPage}
-          prevPage={prevPage}
-        />
+        {/* 求人一覧と状態表示 */}
+        {isLoading ? (
+          <div className="py-10 text-center">求人情報を読み込んでいます。</div>
+        ) : error ? (
+          <div className="py-10 text-center text-red-500">エラー: {error}</div>
+        ) : (
+          <>
+            <JobCard jobs={currentJobs} />
+            <Pagination
+              jobsPerPage={jobsPerPage}
+              totalJobs={allJobs.length}
+              paginate={paginate}
+              currentPage={currentPage}
+              nextPage={nextPage}
+              prevPage={prevPage}
+            />
+          </>
+        )}
       </main>
 
       {/* フッター */}
