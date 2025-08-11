@@ -42,7 +42,7 @@ export default function ApplyPage({ params }) {
             応募内容の確認
           </h1>
 
-          {/* mdサイズ以上で中央揃えにするためのラッパー */}
+          {/* mdサイズ以上で中央揃えにするラッパー */}
           <div className="md:flex md:justify-center">
             <div className="mb-8 flex flex-col items-center gap-6 text-center md:inline-flex md:flex-row md:text-left">
               <div className="relative h-48 w-full flex-shrink-0 md:w-72">
@@ -58,7 +58,7 @@ export default function ApplyPage({ params }) {
                   {job.title}
                 </h2>
                 <p className="text-lg font-bold text-blue-800">{job.company}</p>
-                <p className="text-base">
+                <p className="text-start text-base">
                   <strong>時給:</strong> {job.wage}
                   <br />
                   <strong>勤務時間:</strong> {job.hours}
@@ -84,16 +84,17 @@ export default function ApplyPage({ params }) {
         </div>
       </main>
 
+      {/* モーダル */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="w-full max-w-md rounded-lg bg-white p-8 text-center shadow-xl">
+          <div className="mx-3 w-full max-w-md rounded-lg bg-white p-7 text-center shadow-xl">
             <h3 className="text-2xl font-bold text-blue-800">
               応募が完了しました
             </h3>
             <p className="mb-6 mt-4">
               ご応募ありがとうございました。
               <br />
-              採用担当者からの連絡をお待ちください。
+              企業からの連絡をお待ちください。
             </p>
             <button
               onClick={handleCloseModal}

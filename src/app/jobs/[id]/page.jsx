@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { use } from 'react';
 
 import ApplyButton from '@/app/components/ApplyButton';
 import BackButton from '@/app/components/BackButton';
@@ -16,8 +15,7 @@ const getJobById = (id) => {
 };
 
 export default function JobDetailPage({ params }) {
-  const { id } = use(params);
-  const job = getJobById(id);
+  const job = getJobById(params.id);
 
   // IDに対応する求人がない際は404ページを表示
   if (!job) {
@@ -32,24 +30,24 @@ export default function JobDetailPage({ params }) {
           <div className="mb-6 flex flex-col items-center gap-6 md:flex-row">
             <div className="relative h-48 w-72 flex-shrink-0 md:w-72">
               <Image
-                src={job.image}
-                alt={job.title}
+                src={job.imageUrl}
+                alt={job.jobTitle}
                 fill
                 className="rounded-md object-cover"
               />
             </div>
             <div className="flex-grow md:mt-4">
               <h1 className="mb-2 text-2xl font-bold text-blue-800">
-                {job.title}
+                {job.jobTitle}
               </h1>
               <h1 className="text-1xl mb-2 font-bold text-blue-800">
-                {job.company}
+                {job.companyName}
               </h1>
-              <p className="mb-4 text-lg font-semibold">{job.summary}</p>
+              <p className="mb-4 text-lg font-semibold">{job.jobRole}</p>
               <p className="text-base">
-                <strong>時給:</strong> {job.wage}
+                <strong>時給:</strong> {job.hourlyWage?.toLocaleString()}円～
                 <br />
-                <strong>勤務時間:</strong> {job.hours}
+                <strong>勤務時間:</strong> {job.workingHours}
               </p>
             </div>
           </div>
