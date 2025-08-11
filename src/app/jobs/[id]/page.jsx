@@ -29,13 +29,13 @@ export default function JobDetailPage({ params }) {
       <Header />
       <main className="mx-auto mt-8 w-full max-w-4xl flex-grow px-4">
         <article className="rounded-lg bg-white p-8 shadow-md">
-          <div className="mb-6 flex flex-col items-start gap-6 md:flex-row">
+          <div className="mb-6 flex flex-col items-center gap-6 md:flex-row">
             <div className="relative h-48 w-72 flex-shrink-0 md:w-72">
               <Image
                 src={job.image}
                 alt={job.title}
                 fill
-                className="rounded-md object-contain"
+                className="rounded-md object-cover"
               />
             </div>
             <div className="flex-grow md:mt-4">
