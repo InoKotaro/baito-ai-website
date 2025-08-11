@@ -39,13 +39,13 @@ export default function ApplyPage({ params }) {
       <main className="mx-auto mt-8 w-full max-w-4xl flex-grow px-4">
         <div className="rounded-lg bg-white p-8 shadow-md">
           <h1 className="mb-6 border-b pb-4 text-3xl font-bold text-blue-800">
-            応募内容の確認
+            応募内容確認
           </h1>
 
           {/* mdサイズ以上で中央揃えにするラッパー */}
           <div className="md:flex md:justify-center">
             <div className="mb-8 flex flex-col items-center gap-6 text-center md:inline-flex md:flex-row md:text-left">
-              <div className="relative h-48 w-full flex-shrink-0 md:w-72">
+              <div className="relative h-48 w-72 flex-shrink-0 md:w-72">
                 <Image
                   src={job.image}
                   alt={job.title}
@@ -57,7 +57,9 @@ export default function ApplyPage({ params }) {
                 <h2 className="text-2xl font-bold text-blue-800">
                   {job.title}
                 </h2>
-                <p className="text-lg font-bold text-blue-800">{job.company}</p>
+                <p className="mb-4 text-lg font-bold text-blue-800">
+                  {job.company}
+                </p>
                 <p className="text-start text-base">
                   <strong>時給:</strong> {job.wage}
                   <br />
