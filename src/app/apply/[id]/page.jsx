@@ -1,9 +1,8 @@
 'use client';
-
 import Image from 'next/image';
 import { notFound, useRouter } from 'next/navigation';
-// `React.use()`でラップ化に必須
-import { use, useState } from 'react';
+import React, { use } from 'react';
+import { useState } from 'react';
 
 import BackButton from '@/app/components/BackButton';
 import Footer from '@/app/components/Footer';
@@ -16,7 +15,6 @@ const getJobById = (id) => {
 };
 
 export default function ApplyPage({ params }) {
-  // 将来のバージョンに対応　＝＞　`params`を`React.use()`でラップ化
   const { id } = use(params);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
@@ -44,28 +42,33 @@ export default function ApplyPage({ params }) {
             応募内容の確認
           </h1>
 
-          <div className="mb-8 flex items-center gap-6">
-            <div className="relative h-48 w-72 flex-shrink-0">
-              <Image
-                src={job.image}
-                alt={job.title}
-                fill
-                className="rounded-md object-contain"
-              />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold text-blue-800">{job.title}</h2>
-              <p className="text-lg font-bold text-blue-800">{job.company}</p>
-              <p className="mt-2">
-                時給: {job.wage}
-                <br />
-                勤務時間: {job.hours}
-              </p>
+          {/* mdサイズ以上で中央揃えにするためのラッパー */}
+          <div className="md:flex md:justify-center">
+            <div className="mb-8 flex flex-col items-center gap-6 text-center md:inline-flex md:flex-row md:text-left">
+              <div className="relative h-48 w-full flex-shrink-0 md:w-72">
+                <Image
+                  src={job.image}
+                  alt={job.title}
+                  fill
+                  className="rounded-md object-cover"
+                />
+              </div>
+              <div className="flex-grow">
+                <h2 className="text-2xl font-bold text-blue-800">
+                  {job.title}
+                </h2>
+                <p className="text-lg font-bold text-blue-800">{job.company}</p>
+                <p className="text-base">
+                  <strong>時給:</strong> {job.wage}
+                  <br />
+                  <strong>勤務時間:</strong> {job.hours}
+                </p>
+              </div>
             </div>
           </div>
 
           <p className="mb-8 text-center">
-            上記の内容で応募します。よろしいですか？
+            上記の求人に応募します。よろしいですか？
           </p>
 
           <div className="flex justify-center gap-4">
@@ -73,7 +76,7 @@ export default function ApplyPage({ params }) {
             <BackButton />
             <button
               onClick={handleApplyClick}
-              className="whitespace-nowrap rounded-lg bg-orange-500 px-8 py-3 font-bold text-white transition-colors hover:bg-orange-600"
+              className="whitespace-nowrap rounded-lg bg-orange-500 px-8 py-4 font-bold text-white transition-colors hover:bg-orange-600"
             >
               応募を確定する
             </button>
