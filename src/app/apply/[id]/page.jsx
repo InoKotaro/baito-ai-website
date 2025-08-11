@@ -73,7 +73,7 @@ export default function ApplyPage({ params }) {
             <BackButton />
             <button
               onClick={handleApplyClick}
-              className="rounded-lg bg-orange-500 px-8 py-3 font-bold text-white transition-colors hover:bg-orange-600"
+              className="whitespace-nowrap rounded-lg bg-orange-500 px-8 py-3 font-bold text-white transition-colors hover:bg-orange-600"
             >
               応募を確定する
             </button>

@@ -45,10 +45,10 @@ export default function JobCard({ jobs }) {
             </p>
           </div>
 
-          <div className="ml-auto flex w-full flex-col items-center justify-center gap-4 self-stretch md:w-auto md:pt-16">
+          <div className="flex w-full justify-center gap-4 md:ml-auto md:w-auto md:flex-col md:pt-16">
             <Link
               href={`/jobs/${job.id}`}
-              className="w-full rounded-lg bg-blue-500 px-4 py-2 text-center font-bold text-white transition-colors hover:bg-blue-600"
+              className="whitespace-nowrap rounded-lg bg-blue-500 px-6 py-4 text-center font-bold text-white transition-colors hover:bg-blue-600"
             >
               詳細を見る
             </Link>

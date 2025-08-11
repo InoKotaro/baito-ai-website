@@ -13,7 +13,7 @@ export default function BackButton() {
     <button
       type="button"
       onClick={handleBackClick}
-      className="rounded-lg bg-gray-300 px-8 py-3 font-bold text-gray-800 transition-colors hover:bg-gray-400"
+      className="whitespace-nowrap rounded-lg bg-gray-300 px-8 py-3 font-bold text-gray-800 transition-colors hover:bg-gray-400"
     >
       戻る
     </button>
