@@ -1,9 +1,45 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState } from 'react';
 
-export default function Header() {
+export default function Header({ isMenuOpen, setIsMenuOpen }) {
+  // ナビゲーション項目を配列で定義し、コードの重複を避ける
+  const navItems = [
+    { href: '/', label: 'ホーム' },
+    { href: '/news', label: 'お知らせ' },
+    { href: '/applications', label: '応募一覧' },
+  ];
+
+  // リンクのリストを生成するコンポーネント
+  const NavLinks = ({ isMobile = false }) => (
+    <>
+      {navItems.map((item) => (
+        <li key={item.href} className={isMobile ? 'border-b' : ''}>
+          <Link
+            href={item.href}
+            className={`block text-gray-600 hover:text-orange-500 ${isMobile ? 'py-4' : ''}`}
+            onClick={() => isMobile && setIsMenuOpen(false)} // モバイル時のみクリックでメニューを閉じる
+          >
+            {item.label}
+          </Link>
+        </li>
+      ))}
+      <li className={isMobile ? 'border-b' : ''}>
+        <button
+          type="button"
+          className={`block w-full text-left text-gray-600 hover:text-orange-500 ${isMobile ? 'py-4' : ''}`}
+          onClick={() => isMobile && setIsMenuOpen(false)}
+        >
+          ログアウト
+        </button>
+      </li>
+    </>
+  );
+
   return (
-    <header className="border-b-4 border-orange-400 bg-white">
+    <header className="sticky top-0 z-20 border-b-4 border-orange-400 bg-white shadow-sm">
       <div className="container mx-auto flex items-center justify-between px-6 py-4">
         <Link href="/" className="flex items-center gap-3">
           <Image
@@ -15,40 +51,61 @@ export default function Header() {
           />
         </Link>
 
-        <nav>
+        {/* ＝＝＝＝＝＝＝ハンバーガーメニュー＝＝＝＝＝＝＝ */}
+        <div className="relative z-50 md:hidden">
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            type="button"
+            className="text-gray-700 focus:outline-none"
+            aria-label="メニューを開閉する"
+            aria-expanded={isMenuOpen}
+          >
+            <svg
+              className="h-9 w-9"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d={
+                  isMenuOpen
+                    ? 'M6 18L18 6M6 6l12 12'
+                    : 'M4 6h16M4 12h16M4 18h16'
+                }
+              />
+            </svg>
+          </button>
+        </div>
+
+        <nav className="hidden md:block">
           <ul className="text-md flex items-center gap-6 font-bold">
-            <li>
-              <Link href="/" className="text-gray-600 hover:text-orange-500">
-                ホーム
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/news"
-                className="text-gray-600 hover:text-orange-500"
-              >
-                お知らせ
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/applications"
-                className="text-gray-600 hover:text-orange-500"
-              >
-                応募一覧
-              </Link>
-            </li>
-            <li>
-              <button
-                type="button"
-                className="text-gray-600 hover:text-orange-500"
-              >
-                ログアウト
-              </button>
-            </li>
+            <NavLinks />
           </ul>
         </nav>
       </div>
+
+      {isMenuOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-black bg-opacity-50 transition-opacity md:hidden"
+          onClick={() => setIsMenuOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      <nav
+        className={`fixed right-0 top-0 z-40 h-full w-64 transform bg-white p-6 shadow-lg transition-transform duration-300 ease-in-out md:hidden ${
+          isMenuOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+        aria-label="モバイルナビゲーション"
+      >
+        <ul className="flex flex-col pt-32 font-bold">
+          <NavLinks isMobile />
+        </ul>
+      </nav>
+      {/* ＝＝＝＝＝＝＝ハンバーガーメニュー＝＝＝＝＝＝＝ */}
     </header>
   );
 }

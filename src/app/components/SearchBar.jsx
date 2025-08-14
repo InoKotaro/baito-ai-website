@@ -24,15 +24,21 @@ export default function SearchBar() {
         <label htmlFor="wage" className="mb-1 text-sm font-semibold">
           時給（最低）
         </label>
-        <input
-          type="number"
+        <select
           id="wage"
           name="wage"
-          placeholder="1100"
-          min="800"
-          max="2000"
           className="rounded border border-gray-300 px-2 py-2 text-base"
-        />
+        >
+          <option value="">選択してください</option>
+          <option value="￥900">900円～</option>
+          <option value="￥1000">1000円～</option>
+          <option value="￥1100">1100円～</option>
+          <option value="￥1200">1200円～</option>
+          <option value="￥1300">1300円～</option>
+          <option value="￥1400">1400円～</option>
+          <option value="￥1500">1500円～</option>
+          <option value="￥2000">2000円～</option>
+        </select>
       </div>
 
       <div className="flex min-w-[120px] flex-col">

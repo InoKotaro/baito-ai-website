@@ -49,14 +49,14 @@ model JobApplication {   //応募履歴
   @@unique([userId, jobId]) // 同じ求人には1回しか応募できない
 }
 
-model RailwayCompany {   //1側
+model RailwayCompany {   //鉄道会社 1側
   id    Int    @id @default(autoincrement())
   name  String
 
   lines Line[]  // 逆向きリレーション
 }
 
-model Line {   //多側
+model Line {   //路線 多側
   id               Int             @id @default(autoincrement())
   lineName         String
 

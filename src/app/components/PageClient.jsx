@@ -11,6 +11,7 @@ import StickySearchBar from '@/app/components/StickySearchBar';
 
 export default function JobPortfolioSite() {
   const [allJobs, setAllJobs] = useState([]);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -72,12 +73,12 @@ export default function JobPortfolioSite() {
   return (
     <div className="flex min-h-screen flex-col bg-orange-50 text-gray-700">
       {/* ヘッダー */}
-      <Header />
+      <Header isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
 
       {/* 固定表示用の検索バー */}
       <div
         className={`fixed left-0 right-0 top-0 z-30 bg-orange-50/95 shadow-md backdrop-blur-sm transition-opacity duration-300 ease-in-out ${
-          isSticky ? 'opacity-100' : 'pointer-events-none opacity-0'
+          isSticky && !isMenuOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
         }`}
       >
         <div className="mx-auto w-full max-w-4xl px-4 py-2">
