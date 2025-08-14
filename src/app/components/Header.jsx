@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
 
 export default function Header({ isMenuOpen, setIsMenuOpen }) {
   // ナビゲーション項目を配列で定義し、コードの重複を避ける
@@ -16,20 +15,23 @@ export default function Header({ isMenuOpen, setIsMenuOpen }) {
   const NavLinks = ({ isMobile = false }) => (
     <>
       {navItems.map((item) => (
-        <li key={item.href} className={isMobile ? 'border-b' : ''}>
+        <li
+          key={item.href}
+          className={isMobile ? 'border-b-2 border-orange-400' : ''}
+        >
           <Link
             href={item.href}
-            className={`block text-gray-600 hover:text-orange-500 ${isMobile ? 'py-4' : ''}`}
+            className={`block text-gray-600 hover:text-orange-500 ${isMobile ? 'py-6' : ''}`}
             onClick={() => isMobile && setIsMenuOpen(false)} // モバイル時のみクリックでメニューを閉じる
           >
             {item.label}
           </Link>
         </li>
       ))}
-      <li className={isMobile ? 'border-b' : ''}>
+      <li className={isMobile ? 'border-b-2 border-orange-400' : ''}>
         <button
           type="button"
-          className={`block w-full text-left text-gray-600 hover:text-orange-500 ${isMobile ? 'py-4' : ''}`}
+          className={`block w-full text-left text-gray-600 hover:text-orange-500 ${isMobile ? 'py-6' : ''}`}
           onClick={() => isMobile && setIsMenuOpen(false)}
         >
           ログアウト
@@ -52,33 +54,31 @@ export default function Header({ isMenuOpen, setIsMenuOpen }) {
         </Link>
 
         {/* ＝＝＝＝＝＝＝ハンバーガーメニュー＝＝＝＝＝＝＝ */}
-        <div className="relative z-50 md:hidden">
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            type="button"
-            className="text-gray-700 focus:outline-none"
-            aria-label="メニューを開閉する"
-            aria-expanded={isMenuOpen}
-          >
-            <svg
-              className="h-9 w-9"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+        {/* 開くボタン */}
+        {!isMenuOpen && (
+          <div className="z-30 md:hidden">
+            <button
+              onClick={() => setIsMenuOpen(true)}
+              type="button"
+              className="text-gray-700 hover:text-orange-500 focus:outline-none"
+              aria-label="メニューを開閉する"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d={
-                  isMenuOpen
-                    ? 'M6 18L18 6M6 6l12 12'
-                    : 'M4 6h16M4 12h16M4 18h16'
-                }
-              />
-            </svg>
-          </button>
-        </div>
+              <svg
+                className="h-9 w-9"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            </button>
+          </div>
+        )}
 
         <nav className="hidden md:block">
           <ul className="text-md flex items-center gap-6 font-bold">
@@ -101,6 +101,27 @@ export default function Header({ isMenuOpen, setIsMenuOpen }) {
         }`}
         aria-label="モバイルナビゲーション"
       >
+        {/* 閉じるボタン */}
+        <button
+          onClick={() => setIsMenuOpen(false)}
+          type="button"
+          className="absolute right-6 top-4 text-gray-700 hover:text-orange-500 focus:outline-none"
+          aria-label="メニューを閉じる"
+        >
+          <svg
+            className="h-9 w-9"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
         <ul className="flex flex-col pt-32 font-bold">
           <NavLinks isMobile />
         </ul>
