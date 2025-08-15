@@ -1,4 +1,4 @@
-export default function SearchBar() {
+export default function SearchBar({ railwayCompanies = [] }) {
   return (
     <form
       className="flex flex-wrap items-end justify-center gap-4 rounded-md bg-white p-6 shadow"
@@ -14,9 +14,15 @@ export default function SearchBar() {
           className="rounded border border-gray-300 px-2 py-2 text-base"
         >
           <option value="">選択してください</option>
-          <option value="JR">JR線</option>
-          <option value="TokyoMetro">東京メトロ</option>
-          <option value="Private">私鉄</option>
+          {railwayCompanies.map((company) => (
+            <optgroup label={company.name} key={company.id}>
+              {company.lines.map((line) => (
+                <option key={line.id} value={line.id}>
+                  {line.lineName}
+                </option>
+              ))}
+            </optgroup>
+          ))}
         </select>
       </div>
 
