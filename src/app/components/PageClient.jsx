@@ -28,7 +28,9 @@ export default function JobPortfolioSite() {
       setError(null);
 
       // 'Job' テーブルから全ての求人情報を取得
-      const { data, error } = await supabase.from('Job').select('*');
+      const { data, error } = await supabase
+        .from('Job')
+        .select('*, occupation:Occupation(occupationName:occupationname), line:Line(lineName:linename)');
 
       if (error) {
         console.error('Error fetching jobs:', error);

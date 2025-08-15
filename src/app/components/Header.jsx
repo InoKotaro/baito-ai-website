@@ -2,9 +2,11 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState } from 'react';
 
-export default function Header({ isMenuOpen, setIsMenuOpen }) {
+export default function Header() {
   // ナビゲーション項目を配列で定義し、コードの重複を避ける
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navItems = [
     { href: '/', label: 'ホーム' },
     { href: '/news', label: 'お知らせ' },

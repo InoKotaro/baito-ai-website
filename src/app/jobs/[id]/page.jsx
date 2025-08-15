@@ -1,23 +1,45 @@
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { use } from 'react';
 
 import ApplyButton from '@/app/components/ApplyButton';
 import BackButton from '@/app/components/BackButton';
 import Footer from '@/app/components/Footer';
 import Header from '@/app/components/Header';
-import { jobs } from '@/data/siteData';
+import { supabase } from '@/lib/supabaseClient';
+
+// 画像が設定されていない場合の代替画像のパス
+const FALLBACK_IMAGE_URL = '/images/no-image.jpg';
 
 // 求人データをIDで検索するヘルパー関数
-const getJobById = (id) => {
+const getJobById = async (id) => {
   // URLパラメータ文字列を数値に変換
   const numericId = parseInt(id, 10);
-  return jobs.find((job) => job.id === numericId);
+  if (isNaN(numericId)) {
+    return null;
+  }
+
+  const { data, error } = await supabase
+    .from('Job')
+    .select(
+      '*, occupation:Occupation(occupationName:occupationname), line:Line(lineName:linename)',
+    )
+    .eq('id', numericId)
+    .single();
+
+  if (error) {
+    console.error('Error fetching job by id:', {
+      message: error.message,
+      details: error.details,
+      code: error.code,
+    });
+    return null;
+  }
+  return data;
 };
 
-export default function JobDetailPage({ params }) {
-  const { id } = use(params);
-  const job = getJobById(id);
+export default async function JobDetailPage({ params }) {
+  const { id } = params;
+  const job = await getJobById(id);
 
   // IDに対応する求人がない際は404ページを表示
   if (!job) {
@@ -35,8 +57,8 @@ export default function JobDetailPage({ params }) {
           <div className="mb-6 flex flex-col items-center gap-6 md:flex-row">
             <div className="relative h-48 w-72 flex-shrink-0 md:w-72">
               <Image
-                src={job.image}
-                alt={job.title}
+                src={job.imageurl || FALLBACK_IMAGE_URL}
+                alt={job.jobtitle}
                 fill
                 className="rounded-md object-cover"
               />
@@ -44,17 +66,18 @@ export default function JobDetailPage({ params }) {
             <div className="flex-grow md:mt-4">
               <div className="text-center md:text-start">
                 <h1 className="mb-2 text-2xl font-bold text-blue-800">
-                  {job.title}
+                  {job.jobtitle}
                 </h1>
                 <h1 className="mb-2 text-lg font-bold text-blue-800">
-                  {job.company}
+                  {job.companyname}
                 </h1>
               </div>
-              <p className="mb-4 text-lg font-semibold">{job.summary}</p>
+              <p className="mb-4 text-lg font-semibold">{job.jobRole}</p>
               <p className="text-base">
-                <strong>時給:</strong> {job.wage}
+                <strong>時給:</strong>{' '}
+                {job.hourlywage?.toLocaleString() ?? 'N/A'}円～
                 <br />
-                <strong>勤務時間:</strong> {job.hours}
+                <strong>勤務時間:</strong> {job.workinghours ?? 'N/A'}
               </p>
             </div>
           </div>
@@ -63,7 +86,7 @@ export default function JobDetailPage({ params }) {
               仕事内容
             </h2>
             <p className="whitespace-pre-line text-gray-700">
-              {job.description}
+              {job.description ?? '詳細な仕事内容はありません。'}
             </p>
           </div>
 

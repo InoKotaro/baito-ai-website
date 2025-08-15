@@ -24,12 +24,6 @@ export default function JobCard({ jobs }) {
             />
           </div>
           <div className="flex-grow md:pt-1">
-            <p className="mb-2 text-sm text-gray-500">
-              {/* 関連データが存在する場合のみ安全に表示 */}
-              {[job.occupation?.occupationName, job.line?.lineName]
-                .filter(Boolean)
-                .join(' / ')}
-            </p>
             <h2 className="mb-1 text-2xl font-bold text-blue-800">
               {job.jobtitle}
             </h2>
