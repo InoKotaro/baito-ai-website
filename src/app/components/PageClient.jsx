@@ -8,6 +8,7 @@ import Pagination from '@/app/components/Pagination';
 import ScrollToTopButton from '@/app/components/ScrollToTopButton';
 import SearchBar from '@/app/components/SearchBar';
 import StickySearchBar from '@/app/components/StickySearchBar';
+import { supabase } from '@/lib/supabaseClient';
 
 export default function JobPortfolioSite() {
   const [allJobs, setAllJobs] = useState([]);
@@ -23,18 +24,19 @@ export default function JobPortfolioSite() {
   // APIから求人データを非同期で取得
   useEffect(() => {
     const fetchJobs = async () => {
-      try {
-        const res = await fetch('/api/jobs');
-        if (!res.ok) {
-          throw new Error('求人情報の取得に失敗しました。');
-        }
-        const data = await res.json();
+      setIsLoading(true);
+      setError(null);
+
+      // 'Job' テーブルから全ての求人情報を取得
+      const { data, error } = await supabase.from('Job').select('*');
+
+      if (error) {
+        console.error('Error fetching jobs:', error);
+        setError('求人情報の取得に失敗しました。');
+      } else {
         setAllJobs(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
       }
+      setIsLoading(false);
     };
 
     fetchJobs();

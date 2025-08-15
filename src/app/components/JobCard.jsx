@@ -17,8 +17,8 @@ export default function JobCard({ jobs }) {
         >
           <div className="relative h-48 w-full flex-shrink-0 md:w-72">
             <Image
-              src={job.imageUrl || FALLBACK_IMAGE_URL}
-              alt={job.jobTitle}
+              src={job.imageurl || FALLBACK_IMAGE_URL}
+              alt={job.jobtitle}
               fill
               className="rounded-md object-cover"
             />
@@ -31,17 +31,17 @@ export default function JobCard({ jobs }) {
                 .join(' / ')}
             </p>
             <h2 className="mb-1 text-2xl font-bold text-blue-800">
-              {job.jobTitle}
+              {job.jobtitle}
             </h2>
             <h3 className="text-1xl mb-2 font-bold text-gray-700">
-              {job.companyName}
+              {job.companyname}
             </h3>
             <p className="mb-4 font-semibold text-gray-700">{job.jobRole}</p>
             <p className="text-lg font-bold text-red-600">
-              時給: {job.hourlyWage?.toLocaleString() ?? 'N/A'}円～
+              時給: {job.hourlywage?.toLocaleString() ?? 'N/A'}円～
             </p>
             <p className="text-lg font-bold text-blue-800">
-              勤務時間: {job.workingHours ?? 'N/A'}
+              勤務時間: {job.workinghours ?? 'N/A'}
             </p>
           </div>
 
