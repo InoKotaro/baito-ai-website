@@ -1,28 +1,57 @@
 'use client';
 import Image from 'next/image';
 import { notFound, useRouter } from 'next/navigation';
-import React, { use } from 'react';
-import { useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 
 import BackButton from '@/app/components/BackButton';
 import Footer from '@/app/components/Footer';
 import Header from '@/app/components/Header';
-import { jobs } from '@/data/siteData';
+import { supabase } from '@/lib/supabaseClient';
 
-const getJobById = (id) => {
+// 画像が設定されていない場合の代替画像のパス
+const FALLBACK_IMAGE_URL = '/images/no-image.jpg';
+
+// 求人データをIDで検索するヘルパー関数
+const getJobById = async (id) => {
   const numericId = parseInt(id, 10);
-  return jobs.find((job) => job.id === numericId);
+  if (isNaN(numericId)) {
+    return null;
+  }
+
+  // supabaseDBから求人取得
+  const { data, error } = await supabase
+    .from('Job')
+    .select('*')
+    .eq('id', numericId)
+    .single();
+
+  if (error) {
+    console.error('Error fetching job by id:', error);
+    return null;
+  }
+  return data;
 };
 
 export default function ApplyPage({ params }) {
   const { id } = use(params);
+  const [job, setJob] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
-  const job = getJobById(id);
 
-  if (!job) {
-    notFound();
-  }
+  useEffect(() => {
+    const fetchJob = async () => {
+      const jobData = await getJobById(id);
+      if (!jobData) {
+        notFound();
+      } else {
+        setJob(jobData);
+      }
+      setLoading(false);
+    };
+
+    fetchJob();
+  }, [id]);
 
   const handleApplyClick = () => {
     setIsModalOpen(true);
@@ -32,6 +61,14 @@ export default function ApplyPage({ params }) {
     setIsModalOpen(false);
     router.push('/');
   };
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-orange-50">
+        <p className="text-lg text-gray-600"></p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-orange-50 text-gray-700">
@@ -47,23 +84,24 @@ export default function ApplyPage({ params }) {
             <div className="mb-8 flex flex-col items-center gap-6 text-center md:inline-flex md:flex-row md:text-left">
               <div className="relative h-48 w-72 flex-shrink-0 md:w-72">
                 <Image
-                  src={job.image}
-                  alt={job.title}
+                  src={job.imageurl || FALLBACK_IMAGE_URL}
+                  alt={job.jobtitle}
                   fill
                   className="rounded-md object-cover"
                 />
               </div>
               <div className="flex-grow">
                 <h2 className="text-2xl font-bold text-blue-800">
-                  {job.title}
+                  {job.jobtitle}
                 </h2>
                 <p className="mb-4 text-lg font-bold text-blue-800">
-                  {job.company}
+                  {job.companyname}
                 </p>
                 <p className="text-start text-base">
-                  <strong>時給:</strong> {job.wage}
+                  <strong>時給:</strong>{' '}
+                  {job.hourlywage?.toLocaleString() ?? 'N/A'}円～
                   <br />
-                  <strong>勤務時間:</strong> {job.hours}
+                  <strong>勤務時間:</strong> {job.workinghours ?? 'N/A'}
                 </p>
               </div>
             </div>
