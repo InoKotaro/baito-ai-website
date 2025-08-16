@@ -108,7 +108,9 @@ export default function ApplyPage({ params }) {
           </div>
 
           <p className="mb-8 text-center">
-            上記の求人に応募します。よろしいですか？
+            上記の求人に応募します。
+            <br className="block md:hidden" />
+            よろしいですか？
           </p>
 
           <div className="flex justify-center gap-4">

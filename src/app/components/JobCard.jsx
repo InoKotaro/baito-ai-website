@@ -2,7 +2,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import LinkApplyButton from '@/app/components/ApplyButton';
+import ApplyButton from '@/app/components/ApplyButton';
 
 // 画像が設定されていない場合の代替画像のパス
 const FALLBACK_IMAGE_URL = '/images/no-image.jpg';
@@ -46,7 +46,7 @@ export default function JobCard({ jobs }) {
             >
               詳細を見る
             </Link>
-            <LinkApplyButton jobId={job.id} />
+            <ApplyButton jobId={job.id} />
           </div>
         </article>
       ))}

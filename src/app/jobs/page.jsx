@@ -1,5 +1,4 @@
 'use client';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
 import Footer from '@/app/components/Footer';
@@ -12,27 +11,23 @@ import StickySearchBar from '@/app/components/StickySearchBar';
 import { supabase } from '@/lib/supabaseClient';
 
 export default function JobPortfolioSite() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  // URLからpageを取得（なければ1）
-  const initialPage = Number(searchParams.get('page')) || 1;
-
   const [allJobs, setAllJobs] = useState([]);
-  const [currentPage, setCurrentPage] = useState(initialPage);
+  const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  // 1ページ内表示件数
   const [jobsPerPage] = useState(3);
 
   const [isSticky, setIsSticky] = useState(false);
   const searchBarRef = useRef(null);
 
-  // APIから求人データ取得
+  // APIから求人データを非同期で取得
   useEffect(() => {
     const fetchJobs = async () => {
       setIsLoading(true);
       setError(null);
 
+      // 'Job' テーブルから全ての求人情報を取得
       const { data, error } = await supabase
         .from('Job')
         .select(
@@ -55,6 +50,7 @@ export default function JobPortfolioSite() {
   useEffect(() => {
     const handleScroll = () => {
       if (searchBarRef.current) {
+        // 元の検索バーが画面上部から見えなくなったら、固定バーを表示
         setIsSticky(window.scrollY > searchBarRef.current.offsetTop);
       }
     };
@@ -65,15 +61,14 @@ export default function JobPortfolioSite() {
     };
   }, []);
 
-  // ページネーションの計算
+  // ページに表示する求人を計算
   const indexOfLastJob = currentPage * jobsPerPage;
   const indexOfFirstJob = indexOfLastJob - jobsPerPage;
   const currentJobs = allJobs.slice(indexOfFirstJob, indexOfLastJob);
 
-  // ページ変更
+  // ページを変更する関数（ページトップへのスクロール機能付き）
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
-    router.push(`?page=${pageNumber}`); // ← URL更新
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -82,9 +77,10 @@ export default function JobPortfolioSite() {
 
   return (
     <div className="flex min-h-screen flex-col bg-orange-50 text-gray-700">
+      {/* ヘッダー */}
       <Header />
 
-      {/* 固定検索バー */}
+      {/* 固定表示用の検索バー */}
       <div
         className={`fixed left-0 right-0 top-0 z-30 bg-orange-50/95 shadow-md backdrop-blur-sm transition-opacity duration-300 ease-in-out ${
           isSticky ? 'opacity-100' : 'pointer-events-none opacity-0'
@@ -96,10 +92,12 @@ export default function JobPortfolioSite() {
       </div>
 
       <main className="mx-auto mt-8 w-full max-w-4xl flex-grow px-4">
+        {/* 検索セクション */}
         <div ref={searchBarRef} className="mb-8">
           <SearchBar />
         </div>
 
+        {/* 求人一覧と状態表示 */}
         {isLoading ? (
           <div className="py-10 text-center">求人情報を読み込んでいます。</div>
         ) : error ? (
@@ -119,7 +117,9 @@ export default function JobPortfolioSite() {
         )}
       </main>
 
+      {/* フッター */}
       <Footer />
+      {/* トップへ戻るボタン */}
       <ScrollToTopButton />
     </div>
   );
