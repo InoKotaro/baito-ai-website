@@ -25,7 +25,6 @@ export default function Header({ isMenuOpen, setIsMenuOpen }) {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setUser(session?.user ?? null);
-        setIsMenuOpen(false); // 認証状態が変わったらメニューを閉じる
       },
     );
 
@@ -80,10 +79,22 @@ export default function Header({ isMenuOpen, setIsMenuOpen }) {
       ) : (
         <>
           <li className={isMobile ? 'border-b-2 border-orange-400' : ''}>
-            <Link href="/login" className={`block text-gray-600 hover:text-orange-500 ${isMobile ? 'py-6' : ''}`} onClick={() => isMobile && setIsMenuOpen(false)}>ログイン</Link>
+            <Link
+              href="/login"
+              className={`block text-gray-600 hover:text-orange-500 ${isMobile ? 'py-6' : ''}`}
+              onClick={() => isMobile && setIsMenuOpen(false)}
+            >
+              ログイン
+            </Link>
           </li>
           <li className={isMobile ? 'border-b-2 border-orange-400' : ''}>
-            <Link href="/signup" className={`block text-gray-600 hover:text-orange-500 ${isMobile ? 'py-6' : ''}`} onClick={() => isMobile && setIsMenuOpen(false)}>新規登録</Link>
+            <Link
+              href="/signup"
+              className={`block text-gray-600 hover:text-orange-500 ${isMobile ? 'py-6' : ''}`}
+              onClick={() => isMobile && setIsMenuOpen(false)}
+            >
+              新規登録
+            </Link>
           </li>
         </>
       )}

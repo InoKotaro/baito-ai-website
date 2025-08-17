@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import Footer from '@/app/components/Footer';
 import Header from '@/app/components/Header';
@@ -14,6 +15,7 @@ export default function SignUp() {
   const [error, setError] = useState(null);
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -35,10 +37,13 @@ export default function SignUp() {
     if (error) {
       setError(error.message);
     } else {
-      setMessage('登録が完了しました。トップページへ自動で移ります。');
+      setMessage('登録が完了しました。\nトップページへ自動で移ります。');
       setName('');
       setEmail('');
       setPassword('');
+      setTimeout(() => {
+        router.push('/');
+      }, 3000); // 3秒後にトップページへリダイレクト
     }
     setIsLoading(false);
   };
@@ -113,7 +118,9 @@ export default function SignUp() {
             </button>
             {error && <p className="mt-4 text-center text-red-500">{error}</p>}
             {message && (
-              <p className="mt-4 text-center text-green-500">{message}</p>
+              <p className="mt-4 whitespace-pre-line text-center text-green-700">
+                {message}
+              </p>
             )}
           </form>
           <p className="mt-6 text-center text-sm">
