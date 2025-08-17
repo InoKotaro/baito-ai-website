@@ -2,16 +2,51 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+
+import { supabase } from '@/lib/supabaseClient';
 
 export default function Header() {
   // ナビゲーション項目を配列で定義し、コードの重複を避ける
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const getSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      setUser(session?.user ?? null);
+    };
+
+    getSession();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null);
+        setIsMenuOpen(false); // 認証状態が変わったらメニューを閉じる
+      },
+    );
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.refresh(); // ページをリフレッシュしてヘッダーを再レンダリング
+  };
+
   const navItems = [
     { href: '/', label: 'ホーム' },
     { href: '/news', label: 'お知らせ' },
-    { href: '/applications', label: '応募一覧' },
   ];
+  if (user) {
+    navItems.push({ href: '/applications', label: '応募一覧' });
+  }
 
   // リンクのリストを生成するコンポーネント
   const NavLinks = ({ isMobile = false }) => (
@@ -30,15 +65,29 @@ export default function Header() {
           </Link>
         </li>
       ))}
-      <li className={isMobile ? 'border-b-2 border-orange-400' : ''}>
-        <button
-          type="button"
-          className={`block w-full text-left text-gray-600 hover:text-orange-500 ${isMobile ? 'py-6' : ''}`}
-          onClick={() => isMobile && setIsMenuOpen(false)}
-        >
-          ログアウト
-        </button>
-      </li>
+      {user ? (
+        <li className={isMobile ? 'border-b-2 border-orange-400' : ''}>
+          <button
+            type="button"
+            className={`block w-full text-left text-gray-600 hover:text-orange-500 ${isMobile ? 'py-6' : ''}`}
+            onClick={async () => {
+              await handleLogout();
+              if (isMobile) setIsMenuOpen(false);
+            }}
+          >
+            ログアウト
+          </button>
+        </li>
+      ) : (
+        <>
+          <li className={isMobile ? 'border-b-2 border-orange-400' : ''}>
+            <Link href="/login" className={`block text-gray-600 hover:text-orange-500 ${isMobile ? 'py-6' : ''}`} onClick={() => isMobile && setIsMenuOpen(false)}>ログイン</Link>
+          </li>
+          <li className={isMobile ? 'border-b-2 border-orange-400' : ''}>
+            <Link href="/signup" className={`block text-gray-600 hover:text-orange-500 ${isMobile ? 'py-6' : ''}`} onClick={() => isMobile && setIsMenuOpen(false)}>新規登録</Link>
+          </li>
+        </>
+      )}
     </>
   );
 
@@ -84,6 +133,11 @@ export default function Header() {
 
         <nav className="hidden md:block">
           <ul className="text-md flex items-center gap-6 font-bold">
+            {user && (
+              <li className="text-blue-700">
+                {user.user_metadata?.full_name || user.email}さんでログイン中
+              </li>
+            )}
             <NavLinks />
           </ul>
         </nav>
@@ -124,7 +178,12 @@ export default function Header() {
             />
           </svg>
         </button>
-        <ul className="flex flex-col pt-32 font-bold">
+        <ul className="flex flex-col pt-16 font-bold">
+          {user && (
+            <li className="border-b-2 border-orange-400 py-6 text-gray-600">
+              {user.user_metadata?.full_name || user.email}さん
+            </li>
+          )}
           <NavLinks isMobile />
         </ul>
       </nav>

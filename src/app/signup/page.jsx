@@ -35,13 +35,7 @@ export default function SignUp() {
     if (error) {
       setError(error.message);
     } else {
-      setMessage(
-        <>
-          登録が完了しました。
-          <br className="block md:hidden" />
-          トップページへ自動で移ります。
-        </>
-      );
+      setMessage('登録が完了しました。トップページへ自動で移ります。');
       setName('');
       setEmail('');
       setPassword('');
