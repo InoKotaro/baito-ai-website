@@ -1,7 +1,7 @@
 'use client';
 import Image from 'next/image';
 import { notFound, useRouter } from 'next/navigation';
-import React, { use, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import BackButton from '@/app/components/BackButton';
 import Footer from '@/app/components/Footer';
@@ -33,7 +33,7 @@ const getJobById = async (id) => {
 };
 
 export default function ApplyPage({ params }) {
-  const { id } = use(params);
+  const { id } = React.use(params);
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -41,7 +41,16 @@ export default function ApplyPage({ params }) {
   const router = useRouter();
 
   useEffect(() => {
-    const fetchJob = async () => {
+    const checkAuthAndFetchJob = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        router.push('/login');
+        return;
+      }
+
       const jobData = await getJobById(id);
       if (!jobData) {
         notFound();
@@ -51,8 +60,8 @@ export default function ApplyPage({ params }) {
       setLoading(false);
     };
 
-    fetchJob();
-  }, [id]);
+    checkAuthAndFetchJob();
+  }, [id, router]);
 
   const handleApplyClick = () => {
     setIsModalOpen(true);
