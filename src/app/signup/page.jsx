@@ -8,30 +8,45 @@ import Header from '@/app/components/Header';
 import { supabase } from '@/lib/supabaseClient';
 
 export default function SignUp() {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [message, setMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSignUp = async (e) => {
     e.preventDefault();
     setError(null);
     setMessage('');
+    setIsLoading(true);
 
     const { error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          // ここで追加情報を渡します
+          full_name: name,
+        },
+      },
     });
 
     if (error) {
       setError(error.message);
     } else {
       setMessage(
-        '登録ありがとうございます！確認メールを送信しましたので、ご確認ください。',
+        <>
+          登録が完了しました。
+          <br className="block md:hidden" />
+          トップページへ自動で移ります。
+        </>
       );
+      setName('');
       setEmail('');
       setPassword('');
     }
+    setIsLoading(false);
   };
 
   return (
@@ -41,6 +56,23 @@ export default function SignUp() {
         <div className="rounded-lg bg-white p-8 shadow-md">
           <h1 className="mb-6 text-center text-2xl font-bold">新規登録</h1>
           <form onSubmit={handleSignUp}>
+            <div className="mb-4">
+              <label
+                htmlFor="name"
+                className="mb-2 block text-sm font-medium text-gray-600"
+              >
+                お名前
+              </label>
+              <input
+                id="name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                placeholder="倍戸 一郎"
+                className="w-full rounded-md border border-gray-300 p-2 focus:border-orange-500 focus:outline-none focus:ring"
+              />
+            </div>
             <div className="mb-4">
               <label
                 htmlFor="email"
@@ -54,6 +86,7 @@ export default function SignUp() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                placeholder="example@email.com"
                 className="w-full rounded-md border border-gray-300 p-2 focus:border-orange-500 focus:outline-none focus:ring"
               />
             </div>
@@ -79,9 +112,10 @@ export default function SignUp() {
             </div>
             <button
               type="submit"
-              className="w-full rounded-md bg-orange-500 px-4 py-2 font-bold text-white hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50"
+              disabled={isLoading}
+              className="w-full rounded-md bg-orange-500 px-4 py-2 font-bold text-white hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 disabled:cursor-not-allowed disabled:bg-orange-300"
             >
-              登録する
+              {isLoading ? '登録中' : '登録する'}
             </button>
             {error && <p className="mt-4 text-center text-red-500">{error}</p>}
             {message && (
