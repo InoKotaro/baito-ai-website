@@ -7,9 +7,8 @@ import { useEffect, useState } from 'react';
 
 import { supabase } from '@/lib/supabaseClient';
 
-export default function Header() {
+export default function Header({ isMenuOpen, setIsMenuOpen }) {
   // ナビゲーション項目を配列で定義し、コードの重複を避ける
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
   const router = useRouter();
 
@@ -135,7 +134,7 @@ export default function Header() {
           <ul className="text-md flex items-center gap-6 font-bold">
             {user && (
               <li className="text-blue-700">
-                {user.user_metadata?.full_name || user.email}さんでログイン中
+                こんにちは {user.user_metadata?.full_name || user.email}さん
               </li>
             )}
             <NavLinks />
@@ -180,8 +179,8 @@ export default function Header() {
         </button>
         <ul className="flex flex-col pt-16 font-bold">
           {user && (
-            <li className="border-b-2 border-orange-400 py-6 text-gray-600">
-              {user.user_metadata?.full_name || user.email}さん
+            <li className="border-b-2 border-orange-400 py-6 text-blue-700">
+              こんにちは {user.user_metadata?.full_name || user.email}さん
             </li>
           )}
           <NavLinks isMobile />

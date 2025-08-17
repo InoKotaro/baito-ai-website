@@ -23,6 +23,7 @@ export default function JobPortfolioSite() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [jobsPerPage] = useState(3);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const [isSticky, setIsSticky] = useState(false);
   const searchBarRef = useRef(null);
@@ -81,8 +82,12 @@ export default function JobPortfolioSite() {
   const prevPage = () => paginate(currentPage - 1);
 
   return (
-    <div className="flex min-h-screen flex-col bg-orange-50 text-gray-700">
-      <Header />
+    <div
+      className={`flex min-h-screen flex-col bg-orange-50 text-gray-700 ${
+        isMenuOpen ? 'h-screen overflow-hidden md:h-auto md:overflow-auto' : ''
+      }`}
+    >
+      <Header isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
 
       {/* 固定検索バー */}
       <div
@@ -120,7 +125,7 @@ export default function JobPortfolioSite() {
       </main>
 
       <Footer />
-      <ScrollToTopButton />
+      {!isMenuOpen && <ScrollToTopButton />}
     </div>
   );
 }

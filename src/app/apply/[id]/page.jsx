@@ -37,6 +37,7 @@ export default function ApplyPage({ params }) {
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -71,8 +72,12 @@ export default function ApplyPage({ params }) {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-orange-50 text-gray-700">
-      <Header />
+    <div
+      className={`flex min-h-screen flex-col bg-orange-50 text-gray-700 ${
+        isMenuOpen ? 'h-screen overflow-hidden md:h-auto md:overflow-auto' : ''
+      }`}
+    >
+      <Header isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
       <main className="mx-auto mt-8 w-full max-w-4xl flex-grow px-4">
         <div className="rounded-lg bg-white p-8 shadow-md">
           <h1 className="mb-6 border-b pb-4 text-3xl font-bold text-blue-800">
