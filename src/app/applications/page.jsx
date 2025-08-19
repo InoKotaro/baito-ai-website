@@ -55,7 +55,7 @@ export default function ApplicationsPage() {
             'Error creating app user:',
             JSON.stringify(insertUserError || {}),
           );
-          setError('ユーザー情報の作成に失敗しました。');
+
           setLoading(false);
           return;
         }
@@ -74,7 +74,7 @@ export default function ApplicationsPage() {
           'Error fetching applications:',
           JSON.stringify(appsError),
         );
-        setError('応募履歴の取得に失敗しました。');
+
         setLoading(false);
         return;
       }
@@ -97,7 +97,7 @@ export default function ApplicationsPage() {
           'Error fetching jobs for applications:',
           JSON.stringify(jobsError),
         );
-        setError('関連する求人の取得に失敗しました。');
+
         setLoading(false);
         return;
       }
@@ -127,7 +127,7 @@ export default function ApplicationsPage() {
         <h1 className="mb-6 text-3xl font-bold text-blue-800">応募一覧</h1>
 
         {loading ? (
-          <div className="py-10 text-center">読み込み中です…</div>
+          <div className="py-10 text-center">読み込み中です</div>
         ) : error ? (
           <div className="py-10 text-center text-red-500">{error}</div>
         ) : applications.length === 0 ? (
@@ -149,7 +149,7 @@ export default function ApplicationsPage() {
                     className="rounded-md object-cover"
                   />
                 </div>
-                <div className="flex-grow md:pt-1">
+                <div className="flex-grow md:pt-6">
                   <h2 className="mb-1 text-2xl font-bold text-blue-800">
                     {app.job?.jobtitle ?? '求人タイトル未設定'}
                   </h2>

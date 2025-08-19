@@ -38,12 +38,10 @@ export default function Header({ isMenuOpen, setIsMenuOpen }) {
     router.refresh(); // ページをリフレッシュしてヘッダーを再レンダリング
   };
 
-  const navItems = [
-    { href: '/', label: 'ホーム' },
-    { href: '/news', label: 'お知らせ' },
-  ];
+  const navItems = [{ href: '/', label: 'ホーム' }];
   if (user) {
     navItems.push({ href: '/applications', label: '応募一覧' });
+    navItems.push({ href: '/mypage', label: 'マイページ' });
   }
 
   // リンクのリストを生成するコンポーネント
