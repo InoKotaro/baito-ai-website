@@ -38,6 +38,7 @@ export default function ApplyPage({ params }) {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -63,13 +64,70 @@ export default function ApplyPage({ params }) {
     checkAuthAndFetchJob();
   }, [id, router]);
 
-  const handleApplyClick = () => {
+  const handleApplyClick = async () => {
+    if (!job) return;
+    setIsSubmitting(true);
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+
+    // アプリ内ユーザー（整数ID）を取得。なければ作成。
+    const { data: dbUser, error: dbUserError } = await supabase
+      .from('User')
+      .select('id')
+      .eq('email', user.email)
+      .single();
+
+    let appUserId = dbUser?.id;
+
+    if (dbUserError || !dbUser) {
+      const fallbackName =
+        user.user_metadata?.full_name ||
+        (user.email ? user.email.split('@')[0] : 'ユーザー');
+
+      const { data: insertedUser, error: insertUserError } = await supabase
+        .from('User')
+        .insert({ email: user.email, name: fallbackName })
+        .select('id')
+        .single();
+
+      if (insertUserError || !insertedUser) {
+        console.error(
+          'Error creating app user:',
+          JSON.stringify(insertUserError || {}),
+        );
+        alert('ユーザー情報の作成に失敗しました。');
+        setIsSubmitting(false);
+        return;
+      }
+      appUserId = insertedUser.id;
+    }
+
+    const { error } = await supabase
+      .from('JobApplication')
+      .insert({ userid: appUserId, jobid: job.id });
+
+    // 一意制約エラー（重複応募）は成功扱い
+    if (error && error.code !== '23505') {
+      console.error('Error inserting application:', error);
+      alert('応募の保存に失敗しました。時間をおいて再度お試しください。');
+      setIsSubmitting(false);
+      return;
+    }
+
+    setIsSubmitting(false);
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    router.push('/');
+    router.push('/applications');
   };
 
   if (loading) {
@@ -132,9 +190,14 @@ export default function ApplyPage({ params }) {
             <BackButton />
             <button
               onClick={handleApplyClick}
-              className="whitespace-nowrap rounded-lg bg-orange-500 px-8 py-4 font-bold text-white transition-colors hover:bg-orange-600"
+              disabled={isSubmitting}
+              className={`whitespace-nowrap rounded-lg px-8 py-4 font-bold text-white transition-colors ${
+                isSubmitting
+                  ? 'cursor-not-allowed bg-orange-300'
+                  : 'bg-orange-500 hover:bg-orange-600'
+              }`}
             >
-              応募を確定する
+              {isSubmitting ? '送信中' : '応募を確定する'}
             </button>
           </div>
         </div>
