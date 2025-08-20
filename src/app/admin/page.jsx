@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useState } from 'react';
 
 import Footer from '@/app/components/Footer';
@@ -9,15 +9,15 @@ import Header from '@/app/components/Header';
 export default function CompanyLoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const router = useRouter();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     // ここでバックエンドAPIへのログイン処理を呼び出します。
     // 今回はダミーとしてコンソールに情報を出力します。
     console.log('ログイン情報:', { email, password });
-    // ログイン成功後、求人作成ページにリダイレクトします。
-    router.push('/admin/job-create');
+    alert('ログインしました。');
+    // ログイン成功後、企業向けダッシュボードなどにリダイレクトする場合は
+    // useRouter() を使用します。
   };
 
   return (

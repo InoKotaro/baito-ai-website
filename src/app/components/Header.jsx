@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { supabase } from '@/lib/supabaseClient';
@@ -11,6 +11,8 @@ export default function Header({ isMenuOpen, setIsMenuOpen }) {
   // ナビゲーション項目を配列で定義し、コードの重複を避ける
   const [user, setUser] = useState(null);
   const router = useRouter();
+  const pathname = usePathname();
+  const isAdminPage = pathname.startsWith('/admin');
 
   useEffect(() => {
     const getSession = async () => {
@@ -37,6 +39,40 @@ export default function Header({ isMenuOpen, setIsMenuOpen }) {
     await supabase.auth.signOut();
     router.refresh(); // ページをリフレッシュしてヘッダーを再レンダリング
   };
+
+  if (isAdminPage) {
+    // 管理者ページ用のヘッダー
+    return (
+      <header className="sticky top-0 z-20 border-b-4 border-orange-400 bg-white shadow-sm">
+        <div className="container mx-auto flex items-center justify-between px-4 py-4 md:px-6">
+          <Link href="/admin/job-create" className="flex items-center gap-3">
+            <Image
+              src="/images/BaitoAI-logo.png"
+              alt="Baito AI ロゴ"
+              width={150}
+              height={40}
+              priority
+            />
+          </Link>
+          <div className="hidden text-lg font-bold text-blue-800 md:block">
+            企業様用ページ
+          </div>
+          <nav>
+            <ul className="text-md flex items-center gap-6 font-bold">
+              <li>
+                <button
+                  onClick={handleLogout}
+                  className="block text-gray-600 hover:text-orange-500"
+                >
+                  ログアウト
+                </button>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+    );
+  }
 
   const navItems = [{ href: '/', label: 'ホーム' }];
   if (user) {
@@ -101,7 +137,7 @@ export default function Header({ isMenuOpen, setIsMenuOpen }) {
 
   return (
     <header className="sticky top-0 z-20 border-b-4 border-orange-400 bg-white shadow-sm">
-      <div className="container mx-auto flex items-center justify-between px-6 py-4">
+      <div className="container mx-auto flex items-center justify-between px-4 py-4 md:px-6">
         <Link href="/" className="flex items-center gap-3">
           <Image
             src="/images/BaitoAI-logo.png"
@@ -161,7 +197,7 @@ export default function Header({ isMenuOpen, setIsMenuOpen }) {
 
       <nav
         className={`fixed right-0 top-0 z-40 h-full w-64 transform bg-white p-6 shadow-lg transition-transform duration-300 ease-in-out md:hidden ${
-          isMenuOpen ? 'translate-x-0' : 'translate-x-full'
+          isMenuOpen && !isAdminPage ? 'translate-x-0' : 'translate-x-full'
         }`}
         aria-label="モバイルナビゲーション"
       >
