@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 
 import Footer from '@/app/components/Footer';
 import Header from '@/app/components/Header';
+import Pagination from '@/app/components/Pagination';
 import { supabase } from '@/lib/supabaseClient';
 
 const FALLBACK_IMAGE_URL = '/images/no-image.jpg';
@@ -16,6 +17,10 @@ export default function ApplicationsPage() {
   const [error, setError] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
+
+  // ページネーション用state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [applicationsPerPage] = useState(5); // 1ページあたりの表示件数
 
   useEffect(() => {
     const fetchApplications = async () => {
@@ -118,6 +123,22 @@ export default function ApplicationsPage() {
     fetchApplications();
   }, [router]);
 
+  // ページネーションのロジック
+  const indexOfLastApplication = currentPage * applicationsPerPage;
+  const indexOfFirstApplication = indexOfLastApplication - applicationsPerPage;
+  const currentApplications = applications.slice(
+    indexOfFirstApplication,
+    indexOfLastApplication,
+  );
+
+  // ページを変更する関数（ページトップへのスクロール機能付き）
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  const nextPage = () => paginate(currentPage + 1);
+  const prevPage = () => paginate(currentPage - 1);
+
   return (
     <div
       className={`flex min-h-screen flex-col bg-orange-50 text-gray-700 ${
@@ -137,47 +158,57 @@ export default function ApplicationsPage() {
             応募履歴はありません。
           </div>
         ) : (
-          <section aria-label="応募一覧">
-            {applications.map((app) => (
-              <article
-                key={app.id}
-                className="mb-6 flex flex-col items-start gap-6 rounded-lg bg-white p-6 shadow-md md:flex-row"
-              >
-                <div className="relative h-40 w-full flex-shrink-0 md:w-56">
-                  <Image
-                    src={app.job?.imageurl || FALLBACK_IMAGE_URL}
-                    alt={app.job?.jobtitle || '応募求人'}
-                    fill
-                    className="rounded-md object-cover"
-                  />
-                </div>
-                <div className="flex-grow md:pt-6">
-                  <h2 className="mb-1 text-2xl font-bold text-blue-800">
-                    {app.job?.jobtitle ?? '求人タイトル未設定'}
-                  </h2>
-                  <p className="mb-2 text-lg font-bold text-gray-700">
-                    {app.job?.companyname ?? '会社名未設定'}
-                  </p>
+          <>
+            <section aria-label="応募一覧">
+              {currentApplications.map((app) => (
+                <article
+                  key={app.id}
+                  className="mb-6 flex flex-col items-start gap-6 rounded-lg bg-white p-6 shadow-md md:flex-row"
+                >
+                  <div className="relative h-40 w-full flex-shrink-0 md:w-56">
+                    <Image
+                      src={app.job?.imageurl || FALLBACK_IMAGE_URL}
+                      alt={app.job?.jobtitle || '応募求人'}
+                      fill
+                      className="rounded-md object-cover"
+                    />
+                  </div>
+                  <div className="flex-grow md:pt-6">
+                    <h2 className="mb-1 text-2xl font-bold text-blue-800">
+                      {app.job?.jobtitle ?? '求人タイトル未設定'}
+                    </h2>
+                    <p className="mb-2 text-lg font-bold text-gray-700">
+                      {app.job?.companyname ?? '会社名未設定'}
+                    </p>
 
-                  <p className="text-sm text-gray-600">
-                    路線:{' '}
-                    {app.job?.line?.railwayCompany?.railwayCompanyName ?? ''}{' '}
-                    {app.job?.line?.lineName ?? '未設定'}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    職種: {app.job?.occupation?.occupationName ?? '未設定'}
-                  </p>
+                    <p className="text-sm text-gray-600">
+                      路線:{' '}
+                      {app.job?.line?.railwayCompany?.railwayCompanyName ?? ''}{' '}
+                      {app.job?.line?.lineName ?? '未設定'}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      職種: {app.job?.occupation?.occupationName ?? '未設定'}
+                    </p>
 
-                  <p className="text-sm text-gray-500">
-                    応募日:{' '}
-                    {app.appliedAt
-                      ? new Date(app.appliedAt).toLocaleDateString()
-                      : '-'}
-                  </p>
-                </div>
-              </article>
-            ))}
-          </section>
+                    <p className="text-sm text-gray-500">
+                      応募日:{' '}
+                      {app.appliedAt
+                        ? new Date(app.appliedAt).toLocaleDateString()
+                        : '-'}
+                    </p>
+                  </div>
+                </article>
+              ))}
+            </section>
+            <Pagination
+              jobsPerPage={applicationsPerPage}
+              totalJobs={applications.length}
+              paginate={paginate}
+              currentPage={currentPage}
+              nextPage={nextPage}
+              prevPage={prevPage}
+            />
+          </>
         )}
       </main>
       <Footer />

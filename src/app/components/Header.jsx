@@ -56,7 +56,7 @@ export default function Header({ isMenuOpen, setIsMenuOpen }) {
             />
           </Link>
           <div className="hidden text-lg font-bold text-blue-800 md:block">
-            企業様用ページ
+            企業様専用ページ
           </div>
           <nav>
             <ul className="text-md flex items-center gap-6 font-bold">
