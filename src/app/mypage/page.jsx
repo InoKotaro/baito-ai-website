@@ -189,13 +189,15 @@ export default function MyPage() {
                 onChange={(e) => setName(e.target.value)}
                 placeholder="お名前"
               />
-              <button
-                onClick={handleUpdateName}
-                disabled={busy}
-                className={`rounded bg-orange-500 px-6 py-2 font-bold text-white ${busy ? 'opacity-60' : 'hover:bg-orange-600'}`}
-              >
-                保存
-              </button>
+              <div className="flex justify-center">
+                <button
+                  onClick={handleUpdateName}
+                  disabled={busy}
+                  className={`rounded bg-orange-500 px-6 py-2 font-bold text-white ${busy ? 'opacity-60' : 'hover:bg-orange-600'}`}
+                >
+                  保存
+                </button>
+              </div>
             </section>
 
             {/* メール・パスワード変更機能は削除 */}
@@ -207,13 +209,15 @@ export default function MyPage() {
               <p className="mb-4 text-sm text-gray-600">
                 応募データを含むアカウント情報を削除します。ログイン用の認証アカウントは削除されません（サインアウトします）。
               </p>
-              <button
-                onClick={handleDeleteAccount}
-                disabled={busy}
-                className={`rounded bg-red-600 px-6 py-2 font-bold text-white ${busy ? 'opacity-60' : 'hover:bg-red-700'}`}
-              >
-                アカウントを削除
-              </button>
+              <div className="flex justify-center">
+                <button
+                  onClick={handleDeleteAccount}
+                  disabled={busy}
+                  className={`rounded bg-red-600 px-6 py-2 font-bold text-white ${busy ? 'opacity-60' : 'hover:bg-red-700'}`}
+                >
+                  アカウントを削除
+                </button>
+              </div>
             </section>
           </div>
         )}
