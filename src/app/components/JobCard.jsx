@@ -23,14 +23,24 @@ export default function JobCard({ jobs }) {
               className="rounded-md object-cover"
             />
           </div>
+
           <div className="flex-grow md:pt-1">
+            {/* 路線、職種 */}
+            <div className="mb-2 flex gap-3 text-sm font-semibold text-gray-600">
+              <p>
+                路線: {job.line?.railwayCompany?.railwayCompanyName ?? ''}{' '}
+                {job.line?.lineName ?? '未設定'}
+              </p>
+              <p>職種: {job.occupation?.occupationName ?? '未設定'}</p>
+            </div>
+
             <h2 className="mb-1 text-2xl font-bold text-blue-800">
               {job.jobtitle}
             </h2>
             <h3 className="text-1xl mb-2 font-bold text-gray-700">
               {job.companyname}
             </h3>
-            <p className="mb-4 font-semibold text-gray-700">{job.jobRole}</p>
+
             <p className="text-lg font-bold text-red-600">
               時給: {job.hourlywage?.toLocaleString() ?? 'N/A'}円～
             </p>

@@ -89,7 +89,9 @@ export default function ApplicationsPage() {
       const jobIds = Array.from(new Set(appRows.map((r) => r.jobid)));
       const { data: jobs, error: jobsError } = await supabase
         .from('Job')
-        .select('*')
+        .select(
+          '*, occupation:Occupation(occupationName:occupationname), line:Line(lineName:linename, railwayCompany:RailwayCompany(railwayCompanyName:name))',
+        )
         .in('id', jobIds);
 
       if (jobsError) {
@@ -155,6 +157,13 @@ export default function ApplicationsPage() {
                   </h2>
                   <p className="mb-2 text-lg font-bold text-gray-700">
                     {app.job?.companyname ?? '会社名未設定'}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    職種: {app.job?.occupation?.occupationName ?? '未設定'}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    路線: {app.job?.line?.railwayCompany?.railwayCompanyName ?? ''}{' '}
+                    {app.job?.line?.lineName ?? '未設定'}
                   </p>
                   <p className="text-sm text-gray-500">
                     応募日:{' '}

@@ -64,6 +64,15 @@ export default async function JobDetailPage({ params }) {
               />
             </div>
             <div className="flex-grow md:mt-4">
+              {/* 路線、職種 */}
+              <div className="mb-2 flex gap-3 text-sm font-semibold text-gray-600">
+                <p>
+                  路線: {job.line?.railwayCompany?.railwayCompanyName ?? ''}{' '}
+                  {job.line?.lineName ?? '未設定'}
+                </p>
+                <p>職種: {job.occupation?.occupationName ?? '未設定'}</p>
+              </div>
+
               <div className="text-center md:text-start">
                 <h1 className="mb-2 text-2xl font-bold text-blue-800">
                   {job.jobtitle}

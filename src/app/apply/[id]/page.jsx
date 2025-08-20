@@ -21,12 +21,14 @@ const getJobById = async (id) => {
   // supabaseDBから求人取得
   const { data, error } = await supabase
     .from('Job')
-    .select('*')
+    .select(
+      '*, occupation:Occupation(occupationName:occupationname), line:Line(lineName:linename, railwayCompany:RailwayCompany(railwayCompanyName:name))',
+    )
     .eq('id', numericId)
     .single();
 
   if (error) {
-    console.error('Error fetching job by id:', error);
+    console.error('Error fetching job by id:', JSON.stringify(error, null, 2));
     return null;
   }
   return data;
@@ -163,6 +165,15 @@ export default function ApplyPage({ params }) {
                 />
               </div>
               <div className="flex-grow">
+                {/* 路線、職種 */}
+                <div className="mb-2 flex gap-3 text-sm font-semibold text-gray-600">
+                  <p>
+                    路線: {job.line?.railwayCompany?.railwayCompanyName ?? ''}{' '}
+                    {job.line?.lineName ?? '未設定'}
+                  </p>
+                  <p>職種: {job.occupation?.occupationName ?? '未設定'}</p>
+                </div>
+
                 <h2 className="text-2xl font-bold text-blue-800">
                   {job.jobtitle}
                 </h2>
@@ -170,6 +181,13 @@ export default function ApplyPage({ params }) {
                   {job.companyname}
                 </p>
                 <p className="text-start text-base">
+                  <strong>職種:</strong>{' '}
+                  {job.occupation?.occupationName ?? '未設定'}
+                  <br />
+                  <strong>路線:</strong>{' '}
+                  {job.line?.railwayCompany?.railwayCompanyName ?? ''}{' '}
+                  {job.line?.lineName ?? '未設定'}
+                  <br />
                   <strong>時給:</strong>{' '}
                   {job.hourlywage?.toLocaleString() ?? 'N/A'}円～
                   <br />

@@ -37,11 +37,11 @@ export default function JobPortfolioSite() {
       const { data, error } = await supabase
         .from('Job')
         .select(
-          '*, occupation:Occupation(occupationName:occupationname), line:Line(lineName:linename)',
+          '*, occupation:Occupation(occupationName:occupationname), line:Line(lineName:linename, railwayCompany:RailwayCompany(railwayCompanyName:name))',
         );
 
       if (error) {
-        console.error('Error fetching jobs:', error);
+        console.error('Error fetching jobs:', JSON.stringify(error, null, 2));
         setError('求人情報の取得に失敗しました。');
       } else {
         setAllJobs(data);
