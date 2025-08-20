@@ -207,7 +207,7 @@ export default function MyPage() {
                 アカウント削除
               </h2>
               <p className="mb-4 text-sm text-gray-600">
-                応募データを含むアカウント情報を削除します。ログイン用の認証アカウントは削除されません（サインアウトします）。
+                応募データを含むアカウント情報を削除します。
               </p>
               <div className="flex justify-center">
                 <button

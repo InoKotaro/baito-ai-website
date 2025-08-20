@@ -81,7 +81,7 @@ export default async function JobDetailPage({ params }) {
                   {job.companyname}
                 </h1>
               </div>
-              <p className="mb-4 text-lg font-semibold">{job.jobRole}</p>
+
               <p className="text-base">
                 <strong>時給:</strong>{' '}
                 {job.hourlywage?.toLocaleString() ?? 'N/A'}円～

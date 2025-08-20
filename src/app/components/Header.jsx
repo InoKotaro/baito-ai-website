@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { supabase } from '@/lib/supabaseClient';
 
 export default function Header({ isMenuOpen, setIsMenuOpen }) {
@@ -12,6 +13,7 @@ export default function Header({ isMenuOpen, setIsMenuOpen }) {
   const [user, setUser] = useState(null);
   const router = useRouter();
   const pathname = usePathname();
+  const { admin, logout: adminLogout } = useAdminAuth();
   const isAdminPage = pathname.startsWith('/admin');
 
   useEffect(() => {
@@ -37,8 +39,12 @@ export default function Header({ isMenuOpen, setIsMenuOpen }) {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    router.refresh(); // ページをリフレッシュしてヘッダーを再レンダリング
-    router.push('/login');  // ログアウト後にログインページへリダイレクト
+    router.push('/login');
+    router.refresh();
+  };
+
+  const handleAdminLogout = async () => {
+    await adminLogout();
   };
 
   if (isAdminPage) {
@@ -60,14 +66,16 @@ export default function Header({ isMenuOpen, setIsMenuOpen }) {
           </div>
           <nav>
             <ul className="text-md flex items-center gap-6 font-bold">
-              <li>
-                <button
-                  onClick={handleLogout}
-                  className="block text-gray-600 hover:text-orange-500"
-                >
-                  ログアウト
-                </button>
-              </li>
+              {admin && (
+                <li>
+                  <button
+                    onClick={handleAdminLogout}
+                    className="block text-gray-600 hover:text-orange-500"
+                  >
+                    ログアウト
+                  </button>
+                </li>
+              )}
             </ul>
           </nav>
         </div>

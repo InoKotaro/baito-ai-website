@@ -33,7 +33,6 @@ export default function JobCard({ jobs }) {
               </p>
               <p>職種: {job.occupation?.occupationName ?? '未設定'}</p>
             </div>
-
             <h2 className="mb-1 text-2xl font-bold text-blue-800">
               {job.jobtitle}
             </h2>

@@ -1,3 +1,4 @@
+import AdminAuthGuard from '@/app/components/AdminAuthGuard';
 import ApplicantListPageClient from '@/app/components/ApplicantListPageClient';
 import Footer from '@/app/components/Footer';
 import Header from '@/app/components/Header';
@@ -14,13 +15,15 @@ export default async function ApplicantListPage() {
   const applicants = await getApplicants();
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50 text-gray-700">
-      <Header />
-      <main className="mx-auto w-full max-w-4xl flex-grow px-4 py-8">
-        <h1 className="mb-6 text-3xl font-bold text-gray-800">応募者一覧</h1>
-        <ApplicantListPageClient applicants={applicants} />
-      </main>
-      <Footer />
-    </div>
+    <AdminAuthGuard>
+      <div className="flex min-h-screen flex-col bg-gray-50 text-gray-700">
+        <Header />
+        <main className="mx-auto w-full max-w-4xl flex-grow px-4 py-8">
+          <h1 className="mb-6 text-3xl font-bold text-blue-800">応募者一覧</h1>
+          <ApplicantListPageClient applicants={applicants} />
+        </main>
+        <Footer />
+      </div>
+    </AdminAuthGuard>
   );
 }
