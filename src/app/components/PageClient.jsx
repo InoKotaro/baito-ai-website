@@ -15,11 +15,9 @@ export default function JobPortfolioSite() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // URLからpageを取得（なければ1）
-  const initialPage = Number(searchParams.get('page')) || 1;
+  const currentPage = Number(searchParams.get('page')) || 1;
 
   const [allJobs, setAllJobs] = useState([]);
-  const [currentPage, setCurrentPage] = useState(initialPage);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [jobsPerPage] = useState(3);
@@ -73,8 +71,7 @@ export default function JobPortfolioSite() {
 
   // ページ変更
   const paginate = (pageNumber) => {
-    setCurrentPage(pageNumber);
-    router.push(`?page=${pageNumber}`); // ← URL更新
+    router.push(`?page=${pageNumber}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 

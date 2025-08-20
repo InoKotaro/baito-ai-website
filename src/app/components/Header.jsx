@@ -38,6 +38,7 @@ export default function Header({ isMenuOpen, setIsMenuOpen }) {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.refresh(); // ページをリフレッシュしてヘッダーを再レンダリング
+    router.push('/login');  // ログアウト後にログインページへリダイレクト
   };
 
   if (isAdminPage) {
