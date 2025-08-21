@@ -51,7 +51,7 @@ export default function Header({ isMenuOpen, setIsMenuOpen }) {
     // 管理者ページ用のヘッダー
     return (
       <header className="sticky top-0 z-20 border-b-4 border-orange-400 bg-white shadow-sm">
-        <div className="container mx-auto flex items-center justify-between px-4 py-4 md:px-6">
+        <div className="container mx-auto flex items-center justify-between px-4 py-4 md:grid md:grid-cols-3 md:px-6">
           <Link href="/admin/job-create" className="flex items-center gap-3">
             <Image
               src="/images/BaitoAI-logo.png"
@@ -61,10 +61,10 @@ export default function Header({ isMenuOpen, setIsMenuOpen }) {
               priority
             />
           </Link>
-          <div className="hidden text-lg font-bold text-blue-800 md:block">
-            企業様専用ページ
+          <div className="hidden text-lg font-bold text-blue-800 md:block md:text-center">
+            {admin ? `${admin.name} 様専用ページ` : '企業様専用ページ'}
           </div>
-          <nav>
+          <nav className="md:justify-self-end">
             <ul className="text-md flex items-center gap-6 font-bold">
               {admin && (
                 <li>

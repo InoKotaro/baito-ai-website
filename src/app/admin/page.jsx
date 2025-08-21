@@ -42,7 +42,7 @@ export default function CompanyLoginPage() {
   if (loading || admin) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-orange-50">
-        <p className="text-lg text-gray-600">読み込み中...</p>
+        <p className="text-lg text-gray-600">読み込み中</p>
       </div>
     );
   }

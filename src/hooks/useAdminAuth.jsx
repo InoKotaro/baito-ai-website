@@ -5,15 +5,15 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { supabase } from '@/lib/supabaseClient';
 
-// 管理者ユーザーかどうかを判定するロジックを修正
+// 管理者ユーザーの会社情報を取得するロジック
 // Supabase Authで認証したユーザーのメールアドレスが`company`テーブルに存在するかどうかで判定します。
-const isAdminUser = async (user) => {
-  if (!user) return false;
+const getAdminCompany = async (user) => {
+  if (!user) return null;
 
   try {
     const { data, error } = await supabase
       .from('Company')
-      .select('id') // 存在確認のため、軽いカラムを1つだけ取得
+      .select('id, name, email') // 会社名も取得
       .eq('email', user.email)
       .single();
 
@@ -23,14 +23,14 @@ const isAdminUser = async (user) => {
         'Error checking admin user:',
         JSON.stringify(error, null, 2),
       );
-      return false;
+      return null;
     }
 
-    // dataがあれば（=companyテーブルにレコードが存在すれば）管理者とみなす
-    return !!data;
+    // dataがあれば（=Companyテーブルにレコードが存在すれば）会社のデータを返す
+    return data;
   } catch (e) {
     console.error('An unexpected error occurred in isAdminUser:', e);
-    return false;
+    return null;
   }
 };
 
@@ -44,11 +44,11 @@ export const useAdminAuth = () => {
     const {
       data: { session },
     } = await supabase.auth.getSession();
+    
+    const companyData = await getAdminCompany(session?.user);
 
-    const is_admin = await isAdminUser(session?.user);
-
-    if (session?.user && is_admin) {
-      setAdmin(session.user);
+    if (companyData) {
+      setAdmin(companyData);
     } else {
       setAdmin(null);
       // 管理者でない、もしくはセッションがない場合は破棄する
@@ -64,9 +64,9 @@ export const useAdminAuth = () => {
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
-        const is_admin = await isAdminUser(session?.user);
-        if (session?.user && is_admin) {
-          setAdmin(session.user);
+        const companyData = await getAdminCompany(session?.user);
+        if (companyData) {
+          setAdmin(companyData);
         } else {
           setAdmin(null);
         }
@@ -89,10 +89,10 @@ export const useAdminAuth = () => {
       return { success: false, error: error.message };
     }
 
-    const is_admin = await isAdminUser(data.user);
+    const companyData = await getAdminCompany(data.user);
 
-    if (data.user && is_admin) {
-      setAdmin(data.user);
+    if (companyData) {
+      setAdmin(companyData);
       return { success: true };
     } else {
       // 管理者でなければログアウトさせる
