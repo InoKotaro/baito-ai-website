@@ -33,7 +33,7 @@ export default function StickySearchBar() {
         className="min-w-[120px] rounded border border-gray-300 px-2 py-1.5 text-sm"
         aria-label="職種"
       >
-        <option value="">職種を選択</option>
+        <option value="">業種を選択</option>
         <option value="convenience">コンビニ</option>
         <option value="restaurant">飲食店</option>
         <option value="retail">販売</option>
@@ -48,4 +48,3 @@ export default function StickySearchBar() {
     </section>
   );
 }
-

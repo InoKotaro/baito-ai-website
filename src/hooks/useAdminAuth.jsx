@@ -44,7 +44,7 @@ export const useAdminAuth = () => {
     const {
       data: { session },
     } = await supabase.auth.getSession();
-    
+
     const companyData = await getAdminCompany(session?.user);
 
     if (companyData) {

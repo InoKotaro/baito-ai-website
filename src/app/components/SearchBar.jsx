@@ -49,7 +49,7 @@ export default function SearchBar({ railwayCompanies = [] }) {
 
       <div className="flex min-w-[120px] flex-col">
         <label htmlFor="jobCategory" className="mb-1 text-sm font-semibold">
-          職種
+          業種
         </label>
         <select
           id="jobCategory"

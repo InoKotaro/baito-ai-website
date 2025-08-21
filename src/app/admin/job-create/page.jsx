@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import AdminAuthGuard from '@/app/components/AdminAuthGuard';
 import Footer from '@/app/components/Footer';
 import Header from '@/app/components/Header';
+import { useAdminAuth } from '@/hooks/useAdminAuth';
 
 export default function CreateJobPage() {
   const [formData, setFormData] = useState({
@@ -18,6 +19,17 @@ export default function CreateJobPage() {
 
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
+  const { admin } = useAdminAuth();
+
+  // admin情報が読み込まれたら、企業名フォームにデフォルト値を設定
+  useEffect(() => {
+    if (admin) {
+      setFormData((prev) => ({
+        ...prev,
+        company: admin.name || '',
+      }));
+    }
+  }, [admin]);
 
   // 時給と業種の選択肢
   const wageOptions = [
@@ -100,17 +112,16 @@ export default function CreateJobPage() {
               {/* 企業名 */}
               <div>
                 <label htmlFor="company" className="block text-sm font-medium">
-                  企業名・店舗名
+                  企業名（自動で設定されます）
                 </label>
                 <input
                   type="text"
                   id="company"
                   name="company"
                   value={formData.company}
-                  onChange={handleChange}
+                  readOnly
                   required
-                  className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  placeholder="例：株式会社デリッシュAI"
+                  className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:outline-none focus:ring-0"
                 />
               </div>
 
@@ -162,6 +173,7 @@ export default function CreateJobPage() {
                   rows="6"
                   value={formData.details}
                   onChange={handleChange}
+                  required
                   className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   placeholder="例：未経験者歓迎！シフトは週2日から相談可能です。美味しいまかない付き！"
                 ></textarea>
