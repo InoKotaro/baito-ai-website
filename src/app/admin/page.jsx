@@ -38,15 +38,6 @@ export default function CompanyLoginPage() {
     setIsLoading(false);
   };
 
-  // ローディング中または既にログイン済みの場合は何も表示しない
-  if (loading || admin) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-orange-50">
-        <p className="text-lg text-gray-600">読み込み中</p>
-      </div>
-    );
-  }
-
   return (
     <div className="flex min-h-screen flex-col bg-orange-50 text-gray-700">
       <Header />

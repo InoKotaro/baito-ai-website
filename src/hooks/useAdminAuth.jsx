@@ -13,10 +13,9 @@ const getAdminCompany = async (user) => {
   try {
     console.log('管理者確認開始:', user.email);
 
-    // Companyテーブルからデータを取得（大文字）
     const { data, error } = await supabase
       .from('Company')
-      .select('id, email')
+      .select('id, email, name')
       .eq('email', user.email)
       .single();
 
@@ -27,23 +26,6 @@ const getAdminCompany = async (user) => {
         details: error.details,
         hint: error.hint,
       });
-
-      // テーブルが存在しない場合は、小文字のcompanyも試す
-      if (error.code === 'PGRST205') {
-        console.log('Companyテーブルが見つからないため、companyテーブルを試行');
-        const { data: altData, error: altError } = await supabase
-          .from('company')
-          .select('id, email')
-          .eq('email', user.email)
-          .single();
-
-        if (altError) {
-          console.error('companyテーブルクエリエラー:', altError);
-          return null;
-        }
-
-        return altData;
-      }
 
       return null;
     }

@@ -26,7 +26,7 @@ export default function CreateJobPage() {
     if (admin) {
       setFormData((prev) => ({
         ...prev,
-        company: admin.email || '',
+        company: admin.name || admin.email || '',
       }));
     }
   }, [admin]);

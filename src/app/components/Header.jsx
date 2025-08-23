@@ -142,7 +142,7 @@ export default function Header({ isMenuOpen, setIsMenuOpen }) {
             />
           </Link>
           <div className="hidden text-lg font-bold text-blue-800 md:block md:text-center">
-            {admin ? `${admin.email} 様専用ページ` : '企業様専用ページ'}
+            {admin ? `${admin.name} 様専用ページ` : '企業様専用ページ'}
           </div>
           <nav className="md:justify-self-end">
             <ul className="text-md flex items-center gap-6 font-bold">
