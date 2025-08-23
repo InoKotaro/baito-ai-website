@@ -195,7 +195,7 @@ export default function MyPage() {
                   disabled={busy}
                   className={`rounded bg-orange-500 px-6 py-2 font-bold text-white ${busy ? 'opacity-60' : 'hover:bg-orange-600'}`}
                 >
-                  保存
+                  {busy ? '保存中' : '保存'}
                 </button>
               </div>
             </section>

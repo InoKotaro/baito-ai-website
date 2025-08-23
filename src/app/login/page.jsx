@@ -19,22 +19,29 @@ export default function Login() {
     e.preventDefault();
     setError(null);
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    if (error) {
-      setError('メールアドレスまたはパスワードが違います。');
-    } else {
-      router.push('/');
-      router.refresh(); // ヘッダーの再レンダリングをトリガー
+      if (error) {
+        setError('メールアドレスまたはパスワードが違います。');
+      } else if (data.user) {
+        // ログイン成功後、少し待ってからリダイレクト
+        setTimeout(() => {
+          router.push('/');
+        }, 100);
+      }
+    } catch (error) {
+      console.error('ログインエラー:', error);
+      setError('ログイン中にエラーが発生しました。');
     }
   };
 
   return (
     <div className="flex min-h-screen flex-col bg-orange-50 text-gray-700">
-      <Header />
+      <Header isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
       <main className="mx-auto mt-24 w-full max-w-md flex-grow px-4">
         <div className="rounded-lg bg-white p-8 shadow-md">
           <h1 className="mb-6 text-center text-2xl font-bold">ログイン</h1>

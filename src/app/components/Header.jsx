@@ -11,40 +11,120 @@ import { supabase } from '@/lib/supabaseClient';
 export default function Header({ isMenuOpen, setIsMenuOpen }) {
   // ナビゲーション項目を配列で定義し、コードの重複を避ける
   const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
-  const { admin, logout: adminLogout } = useAdminAuth();
+
+  // 管理者ページでのみuseAdminAuthを使用
   const isAdminPage = pathname.startsWith('/admin');
+  const { admin, logout: adminLogout } = useAdminAuth();
+
+  // デバッグ用：現在の状態をログ出力
+  useEffect(() => {
+    console.log('Header 状態更新:', {
+      user: user?.email,
+      isLoading,
+      isAdminPage,
+      admin: isAdminPage ? admin?.email : 'N/A',
+    });
+  }, [user, isLoading, isAdminPage, admin]);
 
   useEffect(() => {
+    let mounted = true;
+
     const getSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      setUser(session?.user ?? null);
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
+        if (mounted) {
+          console.log('初期セッション取得:', session?.user?.email);
+          setUser(session?.user ?? null);
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error('セッション取得エラー:', error);
+        if (mounted) {
+          setUser(null);
+          setIsLoading(false);
+        }
+      }
     };
 
     getSession();
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null);
+      async (event, session) => {
+        if (mounted) {
+          console.log(
+            '認証状態変更:',
+            event,
+            session?.user?.email,
+            'Session:',
+            !!session,
+          );
+
+          switch (event) {
+            case 'SIGNED_IN':
+              console.log('ログイン成功:', session?.user?.email);
+              setUser(session?.user ?? null);
+              setIsLoading(false);
+              break;
+            case 'SIGNED_OUT':
+              console.log('ログアウト発生:', session?.user?.email);
+              setUser(null);
+              setIsLoading(false);
+              break;
+            case 'TOKEN_REFRESHED':
+              console.log('トークン更新:', session?.user?.email);
+              setUser(session?.user ?? null);
+              break;
+            case 'USER_UPDATED':
+              console.log('ユーザー更新:', session?.user?.email);
+              setUser(session?.user ?? null);
+              break;
+            default:
+              console.log('その他の認証イベント:', event, session?.user?.email);
+              setUser(session?.user ?? null);
+          }
+        }
       },
     );
 
     return () => {
+      mounted = false;
       authListener.subscription.unsubscribe();
     };
   }, []);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push('/login');
-    router.refresh();
+    try {
+      setIsLoading(true);
+      console.log('ログアウト開始');
+      const { error } = await supabase.auth.signOut();
+
+      if (error) {
+        console.error('ログアウトエラー:', error);
+        return;
+      }
+
+      console.log('ログアウト成功');
+      setUser(null);
+      router.push('/login');
+    } catch (error) {
+      console.error('ログアウトエラー:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleAdminLogout = async () => {
-    await adminLogout();
+    try {
+      await adminLogout();
+    } catch (error) {
+      console.error('管理者ログアウトエラー:', error);
+    }
   };
 
   if (isAdminPage) {
@@ -62,7 +142,7 @@ export default function Header({ isMenuOpen, setIsMenuOpen }) {
             />
           </Link>
           <div className="hidden text-lg font-bold text-blue-800 md:block md:text-center">
-            {admin ? `${admin.name} 様専用ページ` : '企業様専用ページ'}
+            {admin ? `${admin.email} 様専用ページ` : '企業様専用ページ'}
           </div>
           <nav className="md:justify-self-end">
             <ul className="text-md flex items-center gap-6 font-bold">
@@ -83,66 +163,72 @@ export default function Header({ isMenuOpen, setIsMenuOpen }) {
     );
   }
 
-  const navItems = [{ href: '/', label: 'ホーム' }];
-  if (user) {
-    navItems.push({ href: '/applications', label: '応募一覧' });
-    navItems.push({ href: '/mypage', label: 'マイページ' });
-  }
-
   // リンクのリストを生成するコンポーネント
-  const NavLinks = ({ isMobile = false }) => (
-    <>
-      {navItems.map((item) => (
-        <li
-          key={item.href}
-          className={isMobile ? 'border-b-2 border-orange-400' : ''}
-        >
-          <Link
-            href={item.href}
-            className={`block text-gray-600 hover:text-orange-500 ${isMobile ? 'py-6' : ''}`}
-            onClick={() => isMobile && setIsMenuOpen(false)} // モバイル時のみクリックでメニューを閉じる
+  const NavLinks = ({ user, isMobile = false, onLogout, onLinkClick }) => {
+    const navItems = [{ href: '/', label: 'ホーム' }];
+
+    // ローディング中またはユーザーがログインしている場合
+    if (!isLoading && user) {
+      navItems.push({ href: '/applications', label: '応募一覧' });
+      navItems.push({ href: '/mypage', label: 'マイページ' });
+    }
+
+    const handleLogoutClick = async () => {
+      await onLogout();
+      if (onLinkClick) onLinkClick();
+    };
+
+    return (
+      <>
+        {navItems.map((item) => (
+          <li
+            key={item.href}
+            className={isMobile ? 'border-b-2 border-orange-400' : ''}
           >
-            {item.label}
-          </Link>
-        </li>
-      ))}
-      {user ? (
-        <li className={isMobile ? 'border-b-2 border-orange-400' : ''}>
-          <button
-            type="button"
-            className={`block w-full text-left text-gray-600 hover:text-orange-500 ${isMobile ? 'py-6' : ''}`}
-            onClick={async () => {
-              await handleLogout();
-              if (isMobile) setIsMenuOpen(false);
-            }}
-          >
-            ログアウト
-          </button>
-        </li>
-      ) : (
-        <>
-          <li className={isMobile ? 'border-b-2 border-orange-400' : ''}>
             <Link
-              href="/login"
+              href={item.href}
               className={`block text-gray-600 hover:text-orange-500 ${isMobile ? 'py-6' : ''}`}
-              onClick={() => isMobile && setIsMenuOpen(false)}
+              onClick={onLinkClick}
             >
-              ログイン
+              {item.label}
             </Link>
           </li>
+        ))}
+        {!isLoading && user ? (
           <li className={isMobile ? 'border-b-2 border-orange-400' : ''}>
-            <Link
-              href="/signup"
-              className={`block text-gray-600 hover:text-orange-500 ${isMobile ? 'py-6' : ''}`}
-              onClick={() => isMobile && setIsMenuOpen(false)}
+            <button
+              type="button"
+              className={`block w-full text-left text-gray-600 hover:text-orange-500 ${isMobile ? 'py-6' : ''}`}
+              onClick={handleLogoutClick}
             >
-              新規登録
-            </Link>
+              ログアウト
+            </button>
           </li>
-        </>
-      )}
-    </>
-  );
+        ) : !isLoading ? (
+          <>
+            <li className={isMobile ? 'border-b-2 border-orange-400' : ''}>
+              <Link
+                href="/login"
+                className={`block text-gray-600 hover:text-orange-500 ${isMobile ? 'py-6' : ''}`}
+                onClick={onLinkClick}
+              >
+                ログイン
+              </Link>
+            </li>
+            <li className={isMobile ? 'border-b-2 border-orange-400' : ''}>
+              <Link
+                href="/signup"
+                className={`block text-gray-600 hover:text-orange-500 ${isMobile ? 'py-6' : ''}`}
+                onClick={onLinkClick}
+              >
+                新規登録
+              </Link>
+            </li>
+          </>
+        ) : null}
+      </>
+    );
+  };
 
   return (
     <header className="sticky top-0 z-20 border-b-4 border-orange-400 bg-white shadow-sm">
@@ -186,12 +272,12 @@ export default function Header({ isMenuOpen, setIsMenuOpen }) {
 
         <nav className="hidden md:block">
           <ul className="text-md flex items-center gap-6 font-bold">
-            {user && (
+            {!isLoading && user && (
               <li className="text-blue-700">
                 こんにちは {user.user_metadata?.full_name || user.email}さん
               </li>
             )}
-            <NavLinks />
+            <NavLinks user={user} onLogout={handleLogout} />
           </ul>
         </nav>
       </div>
@@ -232,12 +318,17 @@ export default function Header({ isMenuOpen, setIsMenuOpen }) {
           </svg>
         </button>
         <ul className="flex flex-col pt-16 font-bold">
-          {user && (
+          {!isLoading && user && (
             <li className="border-b-2 border-orange-400 py-6 text-blue-700">
               こんにちは {user.user_metadata?.full_name || user.email}さん
             </li>
           )}
-          <NavLinks isMobile />
+          <NavLinks
+            user={user}
+            isMobile
+            onLogout={handleLogout}
+            onLinkClick={() => setIsMenuOpen(false)}
+          />
         </ul>
       </nav>
       {/* ＝＝＝＝＝＝＝ハンバーガーメニュー＝＝＝＝＝＝＝ */}

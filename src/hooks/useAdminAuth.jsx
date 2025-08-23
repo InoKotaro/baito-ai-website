@@ -6,30 +6,52 @@ import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 
 // 管理者ユーザーの会社情報を取得するロジック
-// Supabase Authで認証したユーザーのメールアドレスが`company`テーブルに存在するかどうかで判定します。
+// Supabase Authで認証したユーザーのメールアドレスが`Company`テーブルに存在するかどうかで判定します。
 const getAdminCompany = async (user) => {
   if (!user) return null;
 
   try {
+    console.log('管理者確認開始:', user.email);
+
+    // Companyテーブルからデータを取得（大文字）
     const { data, error } = await supabase
       .from('Company')
-      .select('id, name, email') // 会社名も取得
+      .select('id, email')
       .eq('email', user.email)
       .single();
 
-    // errorがあり、それが「行が見つからない」以外の場合はエラーログを出力
-    if (error && error.code !== 'PGRST116') {
-      console.error(
-        'Error checking admin user:',
-        JSON.stringify(error, null, 2),
-      );
+    if (error) {
+      console.error('Companyテーブルクエリエラー:', {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+      });
+
+      // テーブルが存在しない場合は、小文字のcompanyも試す
+      if (error.code === 'PGRST205') {
+        console.log('Companyテーブルが見つからないため、companyテーブルを試行');
+        const { data: altData, error: altError } = await supabase
+          .from('company')
+          .select('id, email')
+          .eq('email', user.email)
+          .single();
+
+        if (altError) {
+          console.error('companyテーブルクエリエラー:', altError);
+          return null;
+        }
+
+        return altData;
+      }
+
       return null;
     }
 
-    // dataがあれば（=Companyテーブルにレコードが存在すれば）会社のデータを返す
+    console.log('管理者確認結果:', data);
     return data;
   } catch (e) {
-    console.error('An unexpected error occurred in isAdminUser:', e);
+    console.error('管理者確認中の予期しないエラー:', e);
     return null;
   }
 };
@@ -45,30 +67,71 @@ export const useAdminAuth = () => {
       data: { session },
     } = await supabase.auth.getSession();
 
-    const companyData = await getAdminCompany(session?.user);
+    if (!session?.user) {
+      console.log('管理者認証: セッションなし');
+      setAdmin(null);
+      setLoading(false);
+      return;
+    }
+
+    console.log('管理者認証: セッション確認中', session.user.email);
+    const companyData = await getAdminCompany(session.user);
 
     if (companyData) {
+      console.log('管理者認証: 管理者として認識', companyData);
       setAdmin(companyData);
     } else {
+      console.log('管理者認証: 通常ユーザーとして認識');
       setAdmin(null);
-      // 管理者でない、もしくはセッションがない場合は破棄する
-      if (session) {
-        await supabase.auth.signOut();
-      }
+      // 管理者でない場合でもログアウトさせない
+      // 通常のユーザーとしてログインを維持
     }
     setLoading(false);
   }, []);
 
   useEffect(() => {
+    // 管理者ページでのみ実行するように最適化
+    const pathname = window.location.pathname;
+    if (!pathname.startsWith('/admin')) {
+      // 管理者ページ以外では管理者認証をスキップ
+      setAdmin(null);
+      setLoading(false);
+      return;
+    }
+
     checkAdminSession();
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        const companyData = await getAdminCompany(session?.user);
+      async (event, session) => {
+        // 管理者ページ以外では管理者認証をスキップ
+        if (!window.location.pathname.startsWith('/admin')) {
+          return;
+        }
+
+        console.log('管理者認証: 認証状態変更', event, session?.user?.email);
+
+        if (event === 'SIGNED_OUT') {
+          console.log('管理者認証: ログアウト');
+          setAdmin(null);
+          setLoading(false);
+          return;
+        }
+
+        if (!session?.user) {
+          console.log('管理者認証: セッションなし');
+          setAdmin(null);
+          setLoading(false);
+          return;
+        }
+
+        const companyData = await getAdminCompany(session.user);
         if (companyData) {
+          console.log('管理者認証: 管理者として認識', companyData);
           setAdmin(companyData);
         } else {
+          console.log('管理者認証: 通常ユーザーとして認識');
           setAdmin(null);
+          // 管理者でない場合でもログアウトさせない
         }
         setLoading(false);
       },
@@ -78,6 +141,13 @@ export const useAdminAuth = () => {
       authListener.subscription.unsubscribe();
     };
   }, [checkAdminSession]);
+
+  // 管理者ページ以外では早期リターン
+  const pathname =
+    typeof window !== 'undefined' ? window.location.pathname : '';
+  if (!pathname.startsWith('/admin')) {
+    return { admin: null, loading: false, login: () => {}, logout: () => {} };
+  }
 
   const login = async (email, password) => {
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -95,9 +165,10 @@ export const useAdminAuth = () => {
       setAdmin(companyData);
       return { success: true };
     } else {
-      // 管理者でなければログアウトさせる
-      await supabase.auth.signOut();
-      return { success: false, error: '管理者権限がありません。' };
+      // 管理者でなくてもログアウトさせない
+      // 通常のユーザーとしてログインを維持
+      setAdmin(null);
+      return { success: true, message: '通常ユーザーとしてログインしました。' };
     }
   };
 
