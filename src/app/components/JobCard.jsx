@@ -1,13 +1,37 @@
 'use client';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 import ApplyButton from '@/app/components/ApplyButton';
+import { supabase } from '@/lib/supabaseClient';
 
 // 画像が設定されていない場合の代替画像のパス
 const FALLBACK_IMAGE_URL = '/images/no-image.jpg';
 
 export default function JobCard({ jobs }) {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // ログイン状態をチェック
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        setIsLoggedIn(!!user);
+      } catch (error) {
+        console.error('認証状態確認エラー:', error);
+        setIsLoggedIn(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuthStatus();
+  }, []);
+
   return (
     <section aria-label="求人一覧">
       {jobs.map((job) => (
@@ -55,7 +79,16 @@ export default function JobCard({ jobs }) {
             >
               詳細を見る
             </Link>
-            <ApplyButton jobId={job.id} />
+            {/* ログインしている場合のみApplyButtonを表示 */}
+            {!isLoading && isLoggedIn && <ApplyButton jobId={job.id} />}
+            {!isLoading && !isLoggedIn && (
+              <Link
+                href="/login"
+                className="whitespace-nowrap rounded-lg bg-orange-500 px-6 py-4 text-center font-bold text-white transition-colors hover:bg-orange-600"
+              >
+                ログインして応募
+              </Link>
+            )}
           </div>
         </article>
       ))}

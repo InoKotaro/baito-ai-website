@@ -59,6 +59,46 @@ export default function ApplyPage({ params }) {
         notFound();
       } else {
         setJob(jobData);
+
+        // 応募済みかどうかをチェック
+        try {
+          // UserテーブルからユーザーIDを取得
+          const { data: dbUser } = await supabase
+            .from('User')
+            .select('id')
+            .eq('email', user.email)
+            .single();
+
+          if (dbUser) {
+            // JobApplicationテーブルで応募済みかチェック
+            // 実際のカラム名: userid, jobid
+            try {
+              const { data: application, error: appError } = await supabase
+                .from('JobApplication')
+                .select('id')
+                .eq('userid', dbUser.id)
+                .eq('jobid', parseInt(id, 10))
+                .single();
+
+              if (appError) {
+                if (appError.code === 'PGRST116') {
+                  // 行が見つからない（応募していない）
+                  // 何もしない
+                } else {
+                  console.error('応募状況確認エラー:', appError);
+                }
+              } else if (application) {
+                // 応募済みの場合は詳細ページにリダイレクト
+                router.push(`/jobs/${id}`);
+                return;
+              }
+            } catch (error) {
+              console.error('応募状況確認エラー:', error);
+            }
+          }
+        } catch (error) {
+          console.error('応募状況確認エラー:', error);
+        }
       }
       setLoading(false);
     };
@@ -111,13 +151,14 @@ export default function ApplyPage({ params }) {
       appUserId = insertedUser.id;
     }
 
-    const { error } = await supabase
+    // 応募処理 - 実際のカラム名: userid, jobid
+    const { error: insertError } = await supabase
       .from('JobApplication')
       .insert({ userid: appUserId, jobid: job.id });
 
     // 一意制約エラー（重複応募）は成功扱い
-    if (error && error.code !== '23505') {
-      console.error('Error inserting application:', error);
+    if (insertError && insertError.code !== '23505') {
+      console.error('Error inserting application:', insertError);
       alert('応募の保存に失敗しました。時間をおいて再度お試しください。');
       setIsSubmitting(false);
       return;

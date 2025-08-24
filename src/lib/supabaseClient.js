@@ -12,10 +12,20 @@ console.log('Supabase設定:', {
   hasKey: !!supabaseAnonKey,
 });
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: true,
+export const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  {
+    auth: {
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: true,
+    },
+    global: {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    },
   },
-});
+);
