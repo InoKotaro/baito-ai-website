@@ -10,7 +10,15 @@ import SearchBar from '@/app/components/SearchBar';
 import StickySearchBar from '@/app/components/StickySearchBar';
 import { supabase } from '@/lib/supabaseClient';
 
+import useSearchOptions from '../hooks/useSearchOptions';
+
 export default function JobPortfolioSite() {
+  const {
+    railwayCompanies,
+    wages,
+    jobCategories,
+    loading: optionsLoading,
+  } = useSearchOptions();
   const [allJobs, setAllJobs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
@@ -94,7 +102,11 @@ export default function JobPortfolioSite() {
       <main className="mx-auto mt-8 w-full max-w-4xl flex-grow px-4">
         {/* 検索セクション */}
         <div ref={searchBarRef} className="mb-8">
-          <SearchBar />
+          <SearchBar
+            railwayCompanies={railwayCompanies}
+            wages={wages}
+            jobCategories={jobCategories}
+          />
         </div>
 
         {/* 求人一覧と状態表示 */}
