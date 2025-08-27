@@ -135,7 +135,9 @@ export default function JobPortfolioSite() {
         ) : error ? (
           <div className="py-10 text-center text-red-500">エラー: {error}</div>
         ) : currentJobs.length === 0 ? (
-          <div className="py-10 text-center text-gray-600">該当する求人はありません。</div>
+          <div className="py-10 text-center text-gray-600">
+            該当する求人はありません。
+          </div>
         ) : (
           <>
             <JobCard jobs={currentJobs} />

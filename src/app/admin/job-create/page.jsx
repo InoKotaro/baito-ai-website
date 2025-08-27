@@ -15,7 +15,13 @@ export default function CreateJobPage() {
     details: '',
     wage: '',
     industry: '',
+    line: '',
+    workinghours: '',
   });
+
+  // DBから選択肢取得
+  const { lines, wages, occupations, loading } =
+    require('@/app/hooks/useSearchOptions').default();
 
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
@@ -30,24 +36,6 @@ export default function CreateJobPage() {
       }));
     }
   }, [admin]);
-
-  // 時給と業種の選択肢
-  const wageOptions = [
-    '1000円',
-    '1100円',
-    '1200円',
-    '1300円',
-    '1400円',
-    '1500円以上',
-  ];
-  const industryOptions = [
-    '飲食',
-    '販売',
-    'サービス',
-    'IT',
-    '軽作業',
-    'その他',
-  ];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -80,23 +68,37 @@ export default function CreateJobPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // ファイルを含むフォームデータ送信に伴い、FormDataオブジェクト使用
-    const submissionData = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
-      submissionData.append(key, value);
-    });
-    if (imageFile) {
-      submissionData.append('image', imageFile, imageFile.name);
-    }
+    // API経由で画像と求人情報を送信
+    const postJobWithImage = async () => {
+      const form = new FormData();
+      form.append('title', formData.title);
+      form.append('company', formData.company);
+      form.append('description', formData.description);
+      form.append('details', formData.details);
+      form.append('wage', formData.wage);
+      form.append('industry', formData.industry);
+      form.append('line', formData.line);
+      form.append('workinghours', formData.workinghours);
 
-    // ここでバックエンドAPIへ submissionData 送信
-    console.log(
-      '登録する求人情報:',
-      Object.fromEntries(submissionData.entries()),
-    );
-    alert('求人を登録しました。');
-    // 登録成功後、企業向けダッシュボードなどにリダイレクトする場合は
-    // useRouter() を使用します。
+      if (imageFile) {
+        form.append('image', imageFile);
+      }
+      try {
+        const res = await fetch('/api/jobs', {
+          method: 'POST',
+          body: form,
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert('求人を登録しました。');
+        } else {
+          alert('登録に失敗しました: ' + (data.error || '不明なエラー'));
+        }
+      } catch (err) {
+        alert('登録時エラー: ' + err.message);
+      }
+    };
+    postJobWithImage();
   };
 
   return (
@@ -138,7 +140,7 @@ export default function CreateJobPage() {
                   onChange={handleChange}
                   required
                   className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  placeholder="例：【ホールスタッフ】"
+                  placeholder="例：ホールスタッフ"
                 />
               </div>
 
@@ -174,9 +176,29 @@ export default function CreateJobPage() {
                   value={formData.details}
                   onChange={handleChange}
                   required
-                  className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  placeholder="例：未経験者歓迎！シフトは週2日から相談可能です。美味しいまかない付き！"
+                  className="focus:ring-blue-500　 mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-blue-500"
+                  placeholder={`例：未経験者歓迎！シフトは週2日から相談可能です。
+　　美味しいまかない付き！`}
                 ></textarea>
+              </div>
+              {/* 勤務時間 */}
+              <div>
+                <label
+                  htmlFor="workinghours"
+                  className="block text-sm font-medium"
+                >
+                  勤務時間
+                </label>
+                <input
+                  type="text"
+                  id="workinghours"
+                  name="workinghours"
+                  value={formData.workinghours}
+                  onChange={handleChange}
+                  required
+                  className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  placeholder="例：10:00〜18:00（シフト制）"
+                />
               </div>
 
               {/* 画像アップロード */}
@@ -204,27 +226,46 @@ export default function CreateJobPage() {
                 )}
               </div>
 
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                {/* 時給 */}
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                {/* 路線 */}
                 <div>
-                  <label htmlFor="wage" className="block text-sm font-medium">
-                    時給
+                  <label htmlFor="line" className="block text-sm font-medium">
+                    路線
                   </label>
                   <select
-                    id="wage"
-                    name="wage"
-                    value={formData.wage}
+                    id="line"
+                    name="line"
+                    value={formData.line}
                     onChange={handleChange}
                     required
                     className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   >
                     <option value="">選択してください</option>
-                    {wageOptions.map((opt) => (
-                      <option key={opt} value={opt}>
-                        {opt}
+                    {lines.map((line) => (
+                      <option key={line.id} value={line.id}>
+                        {line.linename}
                       </option>
                     ))}
                   </select>
+                </div>
+
+                {/* 時給（入力）*/}
+                <div>
+                  <label htmlFor="wage" className="block text-sm font-medium">
+                    時給
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="number"
+                      id="wage"
+                      name="wage"
+                      value={formData.wage}
+                      onChange={handleChange}
+                      min="0"
+                      placeholder="例: 1200"
+                      className="block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    />
+                  </div>
                 </div>
 
                 {/* 業種 */}
@@ -244,9 +285,9 @@ export default function CreateJobPage() {
                     className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   >
                     <option value="">選択してください</option>
-                    {industryOptions.map((opt) => (
-                      <option key={opt} value={opt}>
-                        {opt}
+                    {occupations.map((occ) => (
+                      <option key={occ.id} value={occ.id}>
+                        {occ.occupationname}
                       </option>
                     ))}
                   </select>
