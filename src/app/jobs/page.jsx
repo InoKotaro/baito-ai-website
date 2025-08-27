@@ -83,6 +83,26 @@ export default function JobPortfolioSite() {
   const nextPage = () => paginate(currentPage + 1);
   const prevPage = () => paginate(currentPage - 1);
 
+  // 検索条件で求人一覧を絞り込む
+  const handleSearch = (form) => {
+    let filtered = allJobs;
+    if (form.line) {
+      filtered = filtered.filter((job) => job.line?.id === form.line);
+    }
+    if (form.wage) {
+      filtered = filtered.filter(
+        (job) => String(job.wage?.value) === String(form.wage),
+      );
+    }
+    if (form.occupation) {
+      filtered = filtered.filter(
+        (job) => job.occupation?.id === form.occupation,
+      );
+    }
+    setCurrentPage(1);
+    setAllJobs(filtered);
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-orange-50 text-gray-700">
       {/* ヘッダー */}
@@ -106,6 +126,7 @@ export default function JobPortfolioSite() {
             railwayCompanies={railwayCompanies}
             wages={wages}
             jobCategories={jobCategories}
+            onSearch={handleSearch}
           />
         </div>
 

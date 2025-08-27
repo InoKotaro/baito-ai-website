@@ -79,3 +79,9 @@ model Company {  //企業ログイン用
   email    String @unique
   password String
 }
+
+model wages {
+  id    Int    @id @default(autoincrement())
+  label String
+  value Int
+}

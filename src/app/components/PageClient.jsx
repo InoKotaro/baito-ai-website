@@ -13,6 +13,34 @@ import { supabase } from '@/lib/supabaseClient';
 import useSearchOptions from '../hooks/useSearchOptions';
 
 export default function JobPortfolioSite() {
+  // 検索条件管理用
+  const [searchState, setSearchState] = useState({
+    line: '',
+    wage: '',
+    occupation: '',
+  });
+
+  // 検索ボタン押下時に即座に結果を表示する関数
+  const handleSearch = async (form) => {
+    setIsLoading(true);
+    setError(null);
+    let query = supabase
+      .from('Job')
+      .select(
+        '*, occupation:Occupation(occupationName:occupationname), line:Line(lineName:linename, railwayCompany:RailwayCompany(railwayCompanyName:name))',
+      );
+    if (form.line) query = query.eq('lineid', form.line);
+    if (form.wage) query = query.gte('hourlywage', Number(form.wage));
+    if (form.occupation) query = query.eq('occupationid', form.occupation);
+    const { data, error } = await query;
+    if (error) {
+      setError('求人情報の取得に失敗しました。');
+    } else {
+      setAllJobs(data);
+    }
+    setIsLoading(false);
+    setSearchState(form);
+  };
   const { lines, wages, occupations } = useSearchOptions();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -29,26 +57,23 @@ export default function JobPortfolioSite() {
   const searchBarRef = useRef(null);
 
   // APIから求人データ取得
+  // 初回のみ全件取得
   useEffect(() => {
     const fetchJobs = async () => {
       setIsLoading(true);
       setError(null);
-
       const { data, error } = await supabase
         .from('Job')
         .select(
           '*, occupation:Occupation(occupationName:occupationname), line:Line(lineName:linename, railwayCompany:RailwayCompany(railwayCompanyName:name))',
         );
-
       if (error) {
-        console.error('Error fetching jobs:', JSON.stringify(error, null, 2));
         setError('求人情報の取得に失敗しました。');
       } else {
         setAllJobs(data);
       }
       setIsLoading(false);
     };
-
     fetchJobs();
   }, []);
 
@@ -97,13 +122,20 @@ export default function JobPortfolioSite() {
 
       <main className="mx-auto mt-8 w-full max-w-4xl flex-grow px-4">
         <div ref={searchBarRef} className="mb-8">
-          <SearchBar lines={lines} wages={wages} occupations={occupations} />
+          <SearchBar
+            lines={lines}
+            wages={wages}
+            occupations={occupations}
+            onSearch={handleSearch}
+          />
         </div>
 
         {isLoading ? (
           <div className="py-10 text-center">求人情報を読み込んでいます。</div>
         ) : error ? (
           <div className="py-10 text-center text-red-500">エラー: {error}</div>
+        ) : currentJobs.length === 0 ? (
+          <div className="py-10 text-center text-gray-600">該当する求人はありません。</div>
         ) : (
           <>
             <JobCard jobs={currentJobs} />

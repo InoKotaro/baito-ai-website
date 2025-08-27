@@ -1,10 +1,21 @@
+import { useState } from 'react';
 export default function SearchBar({
   lines = [],
   wages = [],
   occupations = [],
+  onSearch,
 }) {
+  const [form, setForm] = useState({ line: '', wage: '', occupation: '' });
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (onSearch) onSearch(form);
+  };
   return (
     <form
+      onSubmit={handleSubmit}
       className="flex flex-wrap items-end justify-center gap-4 rounded-md bg-white p-6 shadow"
       aria-label="求人検索フォーム"
     >
@@ -15,6 +26,8 @@ export default function SearchBar({
         <select
           id="line"
           name="line"
+          value={form.line}
+          onChange={handleChange}
           className="rounded border border-gray-300 px-2 py-2 text-base"
         >
           <option value="">選択してください</option>
@@ -50,6 +63,8 @@ export default function SearchBar({
         <select
           id="wage"
           name="wage"
+          value={form.wage}
+          onChange={handleChange}
           className="rounded border border-gray-300 px-2 py-2 text-base"
         >
           <option value="">選択してください</option>
@@ -68,6 +83,8 @@ export default function SearchBar({
         <select
           id="occupation"
           name="occupation"
+          value={form.occupation}
+          onChange={handleChange}
           className="rounded border border-gray-300 px-2 py-2 text-base"
         >
           <option value="">選択してください</option>
