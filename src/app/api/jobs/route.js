@@ -1,21 +1,18 @@
 import { NextResponse } from 'next/server';
 
-import prisma from '@/lib/prisma';
 import { supabase } from '@/lib/supabaseClient';
 
+// Supabase経由で求人情報取得
 export async function GET(request) {
   try {
-    // Prismaを使ってデータベースから求人情報をすべて取得
-    const jobs = await prisma.job.findMany();
-
-    return NextResponse.json(jobs);
+    const { data, error } = await supabase.from('Job').select('*');
+    if (error) {
+      throw new Error(error.message);
+    }
+    return NextResponse.json(data);
   } catch (error) {
-    console.error('Failed to fetch jobs:', error);
-    // エラー発生時は、500エラーステータスとエラーメッセージを返す
-    return new NextResponse(
-      JSON.stringify({ error: 'データベースからのデータ取得に失敗しました。' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } },
-    );
+    console.error('求人取得APIエラー:', error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
@@ -35,27 +32,35 @@ export async function POST(req) {
 
     let imageUrl = '';
     if (imageFile) {
-      // ファイル名生成
+      // 画像アップロードのみ分離
       const fileExt = imageFile.name.split('.').pop();
       const fileName = `${Date.now()}.${fileExt}`;
-      // MIMEタイプ推定
-      const getMimeType = (ext) => {
-        ext = ext.toLowerCase();
-        if (ext === 'jpg' || ext === 'jpeg') return 'image/jpeg';
-        if (ext === 'png') return 'image/png';
-        return 'application/octet-stream';
-      };
-      const mimeType = imageFile.type || getMimeType(fileExt);
-      // Supabase Storageへアップロード
-      const { data, error } = await supabase.storage
+      let mimeType = '';
+      if (fileExt === 'jpg' || fileExt === 'jpeg') {
+        mimeType = 'image/jpeg';
+      } else if (fileExt === 'png') {
+        mimeType = 'image/png';
+      } else {
+        mimeType = 'application/octet-stream';
+      }
+      const arrayBuffer = await imageFile.arrayBuffer();
+      const blob = new Blob([arrayBuffer], { type: mimeType });
+      const { error: uploadError } = await supabase.storage
         .from('BaitoAI-images')
-        .upload(fileName, imageFile, {
+        .upload(fileName, blob, {
           cacheControl: '3600',
           upsert: false,
           contentType: mimeType,
         });
-      if (error) {
-        throw new Error('画像アップロード失敗: ' + error.message);
+      if (uploadError) {
+        // 画像アップロード失敗時は求人登録処理を行わず、エラーのみ返す
+        return NextResponse.json(
+          {
+            success: false,
+            error: '画像アップロード失敗: ' + uploadError.message,
+          },
+          { status: 500 },
+        );
       }
       // 公開URL取得
       const { data: urlData } = supabase.storage

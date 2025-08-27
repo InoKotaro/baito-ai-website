@@ -47,10 +47,21 @@ export default function CreateJobPage() {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) {
-      setImageFile(file);
-      // プレビュー用のURLを生成
-      setImagePreview(URL.createObjectURL(file));
+    if (file) {
+      const ext = file.name.split('.').pop().toLowerCase();
+      const isJpg = ext === 'jpg' || ext === 'jpeg';
+      const isPng = ext === 'png';
+      if (
+        (isJpg && file.type === 'image/jpeg') ||
+        (isPng && file.type === 'image/png')
+      ) {
+        setImageFile(file);
+        setImagePreview(URL.createObjectURL(file));
+      } else {
+        alert('JPGまたはPNG画像のみアップロード可能です。');
+        setImageFile(null);
+        setImagePreview('');
+      }
     } else {
       setImageFile(null);
       setImagePreview('');

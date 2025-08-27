@@ -5,6 +5,7 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'yncjrnftwivvatavfpba.supabase.co',
+        pathname: '/storage/v1/object/public/BaitoAI-images/**',
       },
     ],
   },
