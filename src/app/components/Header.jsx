@@ -147,14 +147,24 @@ export default function Header({ isMenuOpen, setIsMenuOpen }) {
           <nav className="md:justify-self-end">
             <ul className="text-md flex items-center gap-6 font-bold">
               {admin && (
-                <li>
-                  <button
-                    onClick={handleAdminLogout}
-                    className="block text-gray-600 hover:text-orange-500"
-                  >
-                    ログアウト
-                  </button>
-                </li>
+                <>
+                  <li>
+                    <Link
+                      href="/admin/applicants"
+                      className="block text-gray-600 hover:text-orange-500"
+                    >
+                      応募者一覧
+                    </Link>
+                  </li>
+                  <li>
+                    <button
+                      onClick={handleAdminLogout}
+                      className="block text-gray-600 hover:text-orange-500"
+                    >
+                      ログアウト
+                    </button>
+                  </li>
+                </>
               )}
             </ul>
           </nav>
