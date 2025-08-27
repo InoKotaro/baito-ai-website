@@ -173,7 +173,7 @@ export default function ApplicationsPage() {
                       className="rounded-md object-cover"
                     />
                   </div>
-                  <div className="flex-grow md:pt-6">
+                  <div className="flex-grow md:pt-2">
                     <h2 className="mb-1 text-2xl font-bold text-blue-800">
                       {app.job?.jobtitle ?? '求人タイトル未設定'}
                     </h2>
