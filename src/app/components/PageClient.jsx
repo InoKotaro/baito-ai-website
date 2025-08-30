@@ -65,7 +65,7 @@ export default function JobPortfolioSite() {
     // ページを1ページ目に戻す
     router.push('?page=1');
   };
-  
+
   const { lines, wages, occupations } = useSearchOptions();
   const router = useRouter();
   const searchParams = useSearchParams();

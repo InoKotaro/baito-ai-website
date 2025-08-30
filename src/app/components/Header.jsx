@@ -174,7 +174,13 @@ export default function Header({ isMenuOpen, setIsMenuOpen, onLogoClick }) {
   }
 
   // リンクのリストを生成するコンポーネント
-  const NavLinks = ({ user, isMobile = false, onLogout, onLinkClick }) => {
+  const NavLinks = ({
+    user,
+    isMobile = false,
+    onLogout,
+    onLinkClick,
+    onHomeClick,
+  }) => {
     const navItems = [{ href: '/', label: 'ホーム' }];
 
     // ローディング中またはユーザーがログインしている場合
@@ -188,6 +194,13 @@ export default function Header({ isMenuOpen, setIsMenuOpen, onLogoClick }) {
       if (onLinkClick) onLinkClick();
     };
 
+    const handleHomeClick = (e) => {
+      if (onHomeClick) {
+        onHomeClick();
+      }
+      if (onLinkClick) onLinkClick();
+    };
+
     return (
       <>
         {navItems.map((item) => (
@@ -198,7 +211,7 @@ export default function Header({ isMenuOpen, setIsMenuOpen, onLogoClick }) {
             <Link
               href={item.href}
               className={`block text-gray-600 hover:text-orange-500 ${isMobile ? 'py-6' : ''}`}
-              onClick={onLinkClick}
+              onClick={item.href === '/' ? handleHomeClick : onLinkClick}
             >
               {item.label}
             </Link>
@@ -291,7 +304,11 @@ export default function Header({ isMenuOpen, setIsMenuOpen, onLogoClick }) {
                 こんにちは {user.user_metadata?.full_name || user.email}さん
               </li>
             )}
-            <NavLinks user={user} onLogout={handleLogout} />
+            <NavLinks
+              user={user}
+              onLogout={handleLogout}
+              onHomeClick={onLogoClick}
+            />
           </ul>
         </nav>
       </div>
@@ -342,6 +359,7 @@ export default function Header({ isMenuOpen, setIsMenuOpen, onLogoClick }) {
             isMobile
             onLogout={handleLogout}
             onLinkClick={() => setIsMenuOpen(false)}
+            onHomeClick={onLogoClick}
           />
         </ul>
       </nav>
