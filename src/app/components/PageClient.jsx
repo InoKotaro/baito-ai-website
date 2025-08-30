@@ -41,6 +41,31 @@ export default function JobPortfolioSite() {
     setIsLoading(false);
     setSearchState(form);
   };
+
+  // 検索状態をリセットして全件表示に戻す関数
+  const resetSearch = async () => {
+    setIsLoading(true);
+    setError(null);
+    setSearchState({ line: '', wage: '', occupation: '' });
+
+    // 全件取得
+    const { data, error } = await supabase
+      .from('Job')
+      .select(
+        '*, occupation:Occupation(occupationName:occupationname), line:Line(lineName:linename, railwayCompany:RailwayCompany(railwayCompanyName:name))',
+      );
+
+    if (error) {
+      setError('求人情報の取得に失敗しました。');
+    } else {
+      setAllJobs(data);
+    }
+    setIsLoading(false);
+
+    // ページを1ページ目に戻す
+    router.push('?page=1');
+  };
+  
   const { lines, wages, occupations } = useSearchOptions();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -111,7 +136,11 @@ export default function JobPortfolioSite() {
         isMenuOpen ? 'h-screen overflow-hidden md:h-auto md:overflow-auto' : ''
       }`}
     >
-      <Header isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
+      <Header
+        isMenuOpen={isMenuOpen}
+        setIsMenuOpen={setIsMenuOpen}
+        onLogoClick={resetSearch}
+      />
 
       {/* 固定検索バー */}
       <div

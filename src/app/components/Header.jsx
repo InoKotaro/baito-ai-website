@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { supabase } from '@/lib/supabaseClient';
 
-export default function Header({ isMenuOpen, setIsMenuOpen }) {
+export default function Header({ isMenuOpen, setIsMenuOpen, onLogoClick }) {
   // ナビゲーション項目を配列で定義し、コードの重複を避ける
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -243,7 +243,11 @@ export default function Header({ isMenuOpen, setIsMenuOpen }) {
   return (
     <header className="sticky top-0 z-20 border-b-4 border-orange-400 bg-white shadow-sm">
       <div className="container mx-auto flex items-center justify-between px-4 py-4 md:px-6">
-        <Link href="/" className="flex items-center gap-3">
+        <Link
+          href="/"
+          className="flex items-center gap-3"
+          onClick={onLogoClick}
+        >
           <Image
             src="/images/BaitoAI-logo.png"
             alt="Baito AI ロゴ"
