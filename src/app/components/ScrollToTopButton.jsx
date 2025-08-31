@@ -36,8 +36,10 @@ export default function ScrollToTopButton() {
     <button
       type="button"
       onClick={scrollToTop}
-      className={`fixed bottom-6 right-6 z-50 rounded-full bg-orange-500 p-3 text-white shadow-lg transition-all duration-300 ease-in-out hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 ${
-        isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0 pointer-events-none'
+      className={`fixed bottom-16 right-6 z-50 rounded-full bg-orange-500 p-3 text-white shadow-lg transition-all duration-300 ease-in-out hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 ${
+        isVisible
+          ? 'translate-y-0 opacity-100'
+          : 'pointer-events-none translate-y-4 opacity-0'
       }`}
       aria-label="トップへ戻る"
       aria-hidden={!isVisible}
