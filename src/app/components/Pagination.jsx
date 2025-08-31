@@ -22,7 +22,7 @@ export default function Pagination({
     } else {
       // 現在のページを中心とした5ページを表示
       let start = Math.max(1, currentPage - 2);
-      let end = Math.min(totalPages, start + 4);
+      let end = Math.min(totalPages, start + 2);
 
       // 最後のページが表示範囲に含まれない場合は調整
       if (end === totalPages) {

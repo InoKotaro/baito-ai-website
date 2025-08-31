@@ -20,7 +20,7 @@ export default function ApplicationsPage() {
 
   // ページネーション用state
   const [currentPage, setCurrentPage] = useState(1);
-  const [applicationsPerPage] = useState(5); // 1ページあたりの表示件数
+  const [applicationsPerPage] = useState(7); // 1ページあたりの表示件数
 
   useEffect(() => {
     const fetchApplications = async () => {

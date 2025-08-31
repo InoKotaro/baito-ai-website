@@ -75,7 +75,7 @@ export default function JobPortfolioSite() {
   const [allJobs, setAllJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [jobsPerPage] = useState(3);
+  const [jobsPerPage] = useState(7);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const [isSticky, setIsSticky] = useState(false);
