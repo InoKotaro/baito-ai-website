@@ -10,111 +10,63 @@ export default function Pagination({
 }) {
   const totalPages = Math.ceil(totalJobs / jobsPerPage);
 
-  // 表示するページ番号を計算
-  const getVisiblePages = () => {
-    const pages = [];
-
-    if (totalPages <= 5) {
-      // 5ページ以下の場合は全て表示
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
-    } else {
-      // 現在のページを中心とした5ページを表示
-      let start = Math.max(1, currentPage - 2);
-      let end = Math.min(totalPages, start + 2);
-
-      // 最後のページが表示範囲に含まれない場合は調整
-      if (end === totalPages) {
-        start = Math.max(1, end - 4);
-      }
-
-      for (let i = start; i <= end; i++) {
-        pages.push(i);
-      }
-    }
-
-    return pages;
-  };
-
-  const visiblePages = getVisiblePages();
-
   return (
     <nav className="mt-8 flex justify-center" aria-label="Page navigation">
       <ul className="inline-flex items-center -space-x-px">
-        <li>
-          <button
-            onClick={prevPage}
-            disabled={currentPage === 1}
-            className="ml-0 rounded-l-lg border border-gray-300 bg-white px-3 py-2 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            ＜
-          </button>
-        </li>
+        {/* 前のページボタン */}
+        <button
+          onClick={prevPage}
+          disabled={currentPage === 1}
+          className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          ＜
+        </button>
 
-        {/* 最初のページが表示範囲に含まれない場合、省略記号を表示 */}
-        {visiblePages[0] > 1 && (
-          <>
-            <li>
+        {/* ページ番号ボタン */}
+        <div className="flex min-w-[200px] items-center justify-center">
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+            // 表示するページ番号を制限（現在のページ周辺のみ表示）
+            const showPage =
+              page === 1 ||
+              page === totalPages ||
+              (page >= currentPage - 2 && page <= currentPage + 2);
+
+            if (!showPage) {
+              // 省略記号を表示
+              if (page === currentPage - 3 || page === currentPage + 3) {
+                return (
+                  <span key={page} className="px-2 py-2 text-gray-500">
+                    ～
+                  </span>
+                );
+              }
+              return null;
+            }
+
+            return (
               <button
-                onClick={() => paginate(1)}
-                className="border border-gray-300 bg-white px-3 py-2 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                key={page}
+                onClick={() => paginate(page)}
+                className={`mx-1 border border-gray-300 px-3 py-2 leading-tight ${
+                  currentPage === page
+                    ? 'bg-orange-100 text-orange-600'
+                    : 'bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+                }`}
               >
-                1
+                {page}
               </button>
-            </li>
-            {visiblePages[0] > 2 && (
-              <li className="border border-gray-300 bg-white px-3 py-2 leading-tight text-gray-500">
-                ...
-              </li>
-            )}
-          </>
-        )}
+            );
+          })}
+        </div>
 
-        {/* 表示範囲内のページ番号 */}
-        {visiblePages.map((number) => (
-          <li key={number}>
-            <button
-              onClick={() => paginate(number)}
-              className={`border border-gray-300 px-3 py-2 leading-tight ${
-                currentPage === number
-                  ? 'bg-orange-100 text-orange-600'
-                  : 'bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700'
-              }`}
-            >
-              {number}
-            </button>
-          </li>
-        ))}
-
-        {/* 最後のページが表示範囲に含まれない場合、省略記号を表示 */}
-        {visiblePages[visiblePages.length - 1] < totalPages && (
-          <>
-            {visiblePages[visiblePages.length - 1] < totalPages - 1 && (
-              <li className="border border-gray-300 bg-white px-3 py-2 leading-tight text-gray-500">
-                ...
-              </li>
-            )}
-            <li>
-              <button
-                onClick={() => paginate(totalPages)}
-                className="border border-gray-300 bg-white px-3 py-2 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-              >
-                {totalPages}
-              </button>
-            </li>
-          </>
-        )}
-
-        <li>
-          <button
-            onClick={nextPage}
-            disabled={currentPage === totalPages}
-            className="rounded-r-lg border border-gray-300 bg-white px-3 py-2 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            ＞
-          </button>
-        </li>
+        {/* 次のページボタン */}
+        <button
+          onClick={nextPage}
+          disabled={currentPage === totalPages}
+          className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          ＞
+        </button>
       </ul>
     </nav>
   );
