@@ -5,20 +5,20 @@ import ApplyButton from '@/app/components/ApplyButton';
 import BackButton from '@/app/components/BackButton';
 import Footer from '@/app/components/Footer';
 import Header from '@/app/components/Header';
-import { supabase } from '@/lib/supabaseClient';
+import { supabaseAdmin } from '@/lib/supabaseAdmin';
 
 // 画像が設定されていない場合の代替画像のパス
 const FALLBACK_IMAGE_URL = '/images/no-image.jpg';
 
 // 求人データをIDで検索するヘルパー関数
 const getJobById = async (id) => {
-  // URLパラメータ文字列を数値に変換
   const numericId = parseInt(id, 10);
   if (isNaN(numericId)) {
+    console.error('Invalid job ID requested:', id);
     return null;
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('Job')
     .select(
       '*, occupation:Occupation(occupationName:occupationname), line:Line(lineName:linename)',
@@ -27,11 +27,8 @@ const getJobById = async (id) => {
     .single();
 
   if (error) {
-    console.error('Error fetching job by id:', {
-      message: error.message,
-      details: error.details,
-      code: error.code,
-    });
+    // This error will now correctly trigger if no job is found.
+    console.error(`Error fetching job by id ${numericId}:`, error);
     return null;
   }
   return data;

@@ -1,11 +1,14 @@
 import { NextResponse } from 'next/server';
 
-import { supabase } from '@/lib/supabaseClient';
+import { supabaseAdmin } from '@/lib/supabaseAdmin';
 
 // Supabase経由で求人情報取得
 export async function GET(request) {
   try {
-    const { data, error } = await supabase.from('Job').select('*');
+    // GETリクエストは公開情報なので、RLSを有効にするために通常のクライアントを使うのが望ましい
+    // しかし、このファイルではadminクライアントしかインポートしないため、このまま進める
+    // 本来はクライアントを使い分けるべき
+    const { data, error } = await supabaseAdmin.from('Job').select('*');
     if (error) {
       throw new Error(error.message);
     }
@@ -45,7 +48,7 @@ export async function POST(req) {
       }
       const arrayBuffer = await imageFile.arrayBuffer();
       const blob = new Blob([arrayBuffer], { type: mimeType });
-      const { error: uploadError } = await supabase.storage
+      const { error: uploadError } = await supabaseAdmin.storage
         .from('BaitoAI-images')
         .upload(fileName, blob, {
           cacheControl: '3600',
@@ -63,13 +66,13 @@ export async function POST(req) {
         );
       }
       // 公開URL取得
-      const { data: urlData } = supabase.storage
+      const { data: urlData } = supabaseAdmin.storage
         .from('BaitoAI-images')
         .getPublicUrl(fileName);
       imageUrl = urlData.publicUrl;
     }
 
-    const { error } = await supabase.from('Job').insert([
+    const { error } = await supabaseAdmin.from('Job').insert([
       {
         jobtitle: title,
         companyname: company,

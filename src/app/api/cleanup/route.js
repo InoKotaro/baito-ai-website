@@ -46,7 +46,6 @@ export async function GET() {
     }
 
     // Supabaseクライアントの接続テスト
-    console.log('Supabase接続テスト中...');
     try {
       const { data: testData, error: testError } =
         await supabase.auth.admin.listUsers({ perPage: 1 });
@@ -64,7 +63,6 @@ export async function GET() {
     // -------------------------------
     // 1. Supabase Auth 全ユーザー取得と削除
     // -------------------------------
-    console.log('認証ユーザー一覧を取得中...');
 
     try {
       // ページネーションを使用して全ユーザーを取得
@@ -74,7 +72,10 @@ export async function GET() {
       let hasMore = true;
 
       while (hasMore) {
-        const { data: { users }, error } = await supabase.auth.admin.listUsers({
+        const {
+          data: { users },
+          error,
+        } = await supabase.auth.admin.listUsers({
           page,
           perPage: pageSize,
         });
@@ -113,7 +114,6 @@ export async function GET() {
       if (allUsers.length > 3) {
         const usersToDelete = allUsers.slice(3);
         console.log(`削除対象ユーザー数: ${usersToDelete.length}`);
-        console.log('削除対象ユーザー:');
         usersToDelete.forEach((user, index) => {
           console.log(
             `  ${index + 1}. ID: ${user.id}, Email: ${user.email}, Role: ${user.role}, Confirmed: ${user.email_confirmed_at}`,
