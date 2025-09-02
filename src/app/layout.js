@@ -2,6 +2,8 @@ import './globals.css';
 
 import { Geist, Geist_Mono } from 'next/font/google';
 
+import CleanupOnLoad from './components/CleanupOnLoad';
+
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
@@ -23,6 +25,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <CleanupOnLoad />
         {children}
       </body>
     </html>
