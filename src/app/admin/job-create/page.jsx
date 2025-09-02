@@ -102,6 +102,19 @@ export default function CreateJobPage() {
         const data = await res.json();
         if (data.success) {
           alert('求人を登録しました。');
+          // フォームを初期状態にリセット
+          setFormData((prev) => ({
+            title: '',
+            company: prev.company, // 企業名は維持
+            description: '',
+            details: '',
+            wage: '',
+            industry: '',
+            line: '',
+            workinghours: '',
+          }));
+          setImageFile(null);
+          setImagePreview('');
         } else {
           alert('登録に失敗しました: ' + (data.error || '不明なエラー'));
         }
