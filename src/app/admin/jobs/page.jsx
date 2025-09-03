@@ -97,7 +97,7 @@ export default function AdminJobsPage() {
         {admin && <Header isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />}
         <main className="mx-auto mb-8 mt-8 w-full max-w-6xl flex-grow px-4">
           <div className="rounded-lg bg-white p-8 shadow-md">
-            <div className="mb-6 flex items-center justify-between">
+            <div className="mb-6 flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between">
               <h1 className="text-3xl font-bold text-blue-800">掲載求人一覧</h1>
               <button
                 onClick={() => router.push('/admin/job-create')}
