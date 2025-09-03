@@ -221,7 +221,7 @@ export default function CreateJobPage() {
                   onChange={handleChange}
                   required
                   className="mt-1 block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  placeholder="例：10:00〜18:00（シフト制）"
+                  placeholder="例：7:00〜23:00（シフト制）"
                 />
               </div>
 

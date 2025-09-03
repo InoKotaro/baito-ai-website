@@ -6,6 +6,7 @@ import BackButton from '@/app/components/BackButton';
 import Footer from '@/app/components/Footer';
 import Header from '@/app/components/Header';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import AdminJobActions from '@/app/components/AdminJobActions';
 
 // 画像が設定されていない場合の代替画像のパス
 const FALLBACK_IMAGE_URL = '/images/no-image.jpg';
@@ -99,6 +100,7 @@ export default async function JobDetailPage({ params }) {
           <div className="mt-6 flex justify-center gap-4">
             <BackButton />
             <ApplyButton jobId={job.id} />
+            <AdminJobActions jobId={job.id} companyName={job.companyname} />
           </div>
         </article>
       </main>

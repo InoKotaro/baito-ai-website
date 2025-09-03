@@ -15,10 +15,10 @@ export default function CompanyLoginPage() {
   const router = useRouter();
   const { admin, loading, login } = useAdminAuth();
 
-  // 既にログインしている場合は求人作成ページにリダイレクト
+  // 既にログインしている場合は求人一覧ページにリダイレクト
   useEffect(() => {
     if (!loading && admin) {
-      router.push('/admin/job-create');
+      router.push('/admin/jobs');
     }
   }, [admin, loading, router]);
 
@@ -30,7 +30,7 @@ export default function CompanyLoginPage() {
     const result = await login(email, password);
 
     if (result.success) {
-      router.push('/admin/job-create');
+      router.push('/admin/jobs');
     } else {
       setError(result.error);
     }

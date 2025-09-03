@@ -12,10 +12,28 @@ export async function GET(request) {
     if (error) {
       throw new Error(error.message);
     }
-    return NextResponse.json(data);
+
+    // フロントエンドが期待する形式に変換
+    const jobs = data.map((job) => ({
+      id: job.id,
+      title: job.jobtitle,
+      company: job.companyname,
+      description: job.description,
+      details: job.jobrole,
+      wage: job.hourlywage,
+      industry: job.occupationid,
+      line: job.lineid,
+      workinghours: job.workinghours,
+      image_url: job.imageurl,
+    }));
+
+    return NextResponse.json({ success: true, jobs });
   } catch (error) {
     console.error('求人取得APIエラー:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 },
+    );
   }
 }
 
