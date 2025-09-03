@@ -279,7 +279,7 @@ export default function CreateJobPage() {
                   <label htmlFor="wage" className="block text-sm font-medium">
                     時給
                   </label>
-                  <div className="flex gap-2">
+                  <div className="no-spin flex gap-2">
                     <input
                       type="number"
                       id="wage"
@@ -288,7 +288,7 @@ export default function CreateJobPage() {
                       onChange={handleChange}
                       min="0"
                       placeholder="例: 1200"
-                      className="block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className="no-spin block w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                     />
                   </div>
                 </div>

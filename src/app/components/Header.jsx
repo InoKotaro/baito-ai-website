@@ -155,30 +155,32 @@ export default function Header({ isMenuOpen, setIsMenuOpen, onLogoClick }) {
 
     return (
       <>
-        {adminNavItems.map((item) => (
-          <li
-            key={item.href}
-            className={isMobile ? 'border-b-2 border-orange-400' : ''}
-          >
-            <Link
-              href={item.href}
-              className={`block text-gray-600 hover:text-orange-500 ${isMobile ? 'py-6' : ''}`}
-              onClick={onLinkClick}
-            >
-              {item.label}
-            </Link>
-          </li>
-        ))}
         {admin && (
-          <li className={isMobile ? 'border-b-2 border-orange-400' : ''}>
-            <button
-              type="button"
-              className={`block w-full text-left text-gray-600 hover:text-orange-500 ${isMobile ? 'py-6' : ''}`}
-              onClick={handleLogoutClick}
-            >
-              ログアウト
-            </button>
-          </li>
+          <>
+            {adminNavItems.map((item) => (
+              <li
+                key={item.href}
+                className={isMobile ? 'border-b-2 border-orange-400' : ''}
+              >
+                <Link
+                  href={item.href}
+                  className={`block text-gray-600 hover:text-orange-500 ${isMobile ? 'py-6' : ''}`}
+                  onClick={onLinkClick}
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+            <li className={isMobile ? 'border-b-2 border-orange-400' : ''}>
+              <button
+                type="button"
+                className={`block w-full text-left text-gray-600 hover:text-orange-500 ${isMobile ? 'py-6' : ''}`}
+                onClick={handleLogoutClick}
+              >
+                ログアウト
+              </button>
+            </li>
+          </>
         )}
       </>
     );
@@ -204,7 +206,7 @@ export default function Header({ isMenuOpen, setIsMenuOpen, onLogoClick }) {
           </Link>
 
           {/* ハンバーガーメニュー開くボタン */}
-          {!isMenuOpen && (
+          {!isMenuOpen && admin && (
             <div className="z-30 md:hidden">
               <button
                 onClick={() => setIsMenuOpen(true)}
