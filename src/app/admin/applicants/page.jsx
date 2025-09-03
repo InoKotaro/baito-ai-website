@@ -1,64 +1,93 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+
 import AdminAuthGuard from '@/app/components/AdminAuthGuard';
 import ApplicantListPageClient from '@/app/components/ApplicantListPageClient';
 import Footer from '@/app/components/Footer';
 import Header from '@/app/components/Header';
-import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { useAdminAuth } from '@/hooks/useAdminAuth';
 
 const APPLICANTS_PER_PAGE = 5;
 
-// サーバー側でデータを取得
-async function getApplicants(page = 1) {
-  const from = (page - 1) * APPLICANTS_PER_PAGE;
-  const to = from + APPLICANTS_PER_PAGE - 1;
+export default function ApplicantsPage() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [applicants, setApplicants] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalApplicants, setTotalApplicants] = useState(0);
+  const { admin } = useAdminAuth();
 
-  const { data, error, count } = await supabaseAdmin
-    .from('JobApplication')
-    .select(
-      `
-      id,
-      appliedat,
-      user:User(name, email),
-      job:Job(jobtitle, companyname)
-    `,
-      { count: 'exact' },
-    )
-    .order('appliedat', { ascending: false })
-    .range(from, to);
+  // 応募者一覧を取得
+  const fetchApplicants = async (page = 1) => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `/api/applicants?page=${page}&limit=${APPLICANTS_PER_PAGE}`,
+      );
+      const data = await response.json();
 
-  if (error) {
-    console.error('Error fetching applicants:', error.message);
-    return { applicants: [], totalApplicants: 0 };
+      if (data.success) {
+        setApplicants(data.applicants || []);
+        setTotalApplicants(data.totalCount || 0);
+        setCurrentPage(page);
+      } else {
+        setError('応募者一覧の取得に失敗しました');
+      }
+    } catch (err) {
+      setError('エラーが発生しました: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (admin) {
+      fetchApplicants(1);
+    }
+  }, [admin]);
+
+  if (loading) {
+    return (
+      <AdminAuthGuard>
+        <div className="flex min-h-screen flex-col bg-orange-50 text-gray-700">
+          <Header isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
+          <main className="mx-auto mb-8 mt-8 w-full max-w-6xl flex-grow px-4">
+            <div className="flex items-center justify-center py-12">
+              <p className="text-lg text-gray-600">読み込み中...</p>
+            </div>
+          </main>
+          <Footer />
+        </div>
+      </AdminAuthGuard>
+    );
   }
-
-  // フロントエンドが期待する形式にデータを変換
-  const mappedApplicants = data.map((app) => ({
-    id: app.id,
-    name: app.user.name,
-    email: app.user.email,
-    appliedDate: new Date(app.appliedat).toLocaleDateString('ja-JP'),
-    jobTitle: app.job.jobtitle,
-    companyName: app.job.companyname,
-  }));
-
-  return { applicants: mappedApplicants, totalApplicants: count };
-}
-
-export default async function ApplicantListPage({ searchParams }) {
-  const page = searchParams?.page ? parseInt(searchParams.page, 5) : 1;
-  const { applicants, totalApplicants } = await getApplicants(page);
 
   return (
     <AdminAuthGuard>
-      <div className="flex min-h-screen flex-col bg-gray-50 text-gray-700">
-        <Header />
-        <main className="mx-auto w-full max-w-4xl flex-grow px-4 py-8">
-          <h1 className="mb-6 text-3xl font-bold text-blue-800">応募者一覧</h1>
-          <ApplicantListPageClient
-            applicants={applicants}
-            currentPage={page}
-            totalApplicants={totalApplicants}
-            applicantsPerPage={APPLICANTS_PER_PAGE}
-          />
+      <div className="flex min-h-screen flex-col bg-orange-50 text-gray-700">
+        <Header isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
+        <main className="mx-auto mb-8 mt-8 w-full max-w-6xl flex-grow px-4">
+          <div className="rounded-lg bg-white p-8 shadow-md">
+            <h1 className="mb-6 text-center text-3xl font-bold text-blue-800">
+              応募者一覧
+            </h1>
+
+            {error && (
+              <div className="mb-6 rounded-md bg-red-50 p-4">
+                <p className="text-red-600">{error}</p>
+              </div>
+            )}
+
+            <ApplicantListPageClient
+              applicants={applicants}
+              currentPage={currentPage}
+              totalApplicants={totalApplicants}
+              applicantsPerPage={APPLICANTS_PER_PAGE}
+              onPageChange={fetchApplicants}
+            />
+          </div>
         </main>
         <Footer />
       </div>

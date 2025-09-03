@@ -18,6 +18,7 @@ export default function CreateJobPage() {
     line: '',
     workinghours: '',
   });
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // DBから選択肢取得
   const { lines, wages, occupations, loading } =
@@ -128,11 +129,11 @@ export default function CreateJobPage() {
   return (
     <AdminAuthGuard>
       <div className="flex min-h-screen flex-col bg-orange-50 text-gray-700">
-        <Header />
+        <Header isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
         <main className="mx-auto mb-8 mt-8 w-full max-w-2xl flex-grow px-4">
           <div className="rounded-lg bg-white p-8 shadow-md">
             <h1 className="mb-6 text-center text-3xl font-bold text-blue-800">
-              求人情報の登録
+              新規求人作成
             </h1>
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* 企業名 */}

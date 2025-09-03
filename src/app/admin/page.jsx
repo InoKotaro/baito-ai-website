@@ -12,6 +12,7 @@ export default function CompanyLoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
   const { admin, loading, login } = useAdminAuth();
 
@@ -40,7 +41,7 @@ export default function CompanyLoginPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-orange-50 text-gray-700">
-      <Header />
+      <Header isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
       <main className="mx-auto mb-8 mt-24 w-full max-w-md flex-grow px-4">
         <div className="rounded-lg bg-white p-8 shadow-md">
           <h1 className="mb-6 text-center text-3xl font-bold text-blue-800">

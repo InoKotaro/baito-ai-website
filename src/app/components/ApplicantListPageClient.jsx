@@ -5,16 +5,21 @@ import { useRouter } from 'next/navigation';
 import ApplicantCard from './ApplicantCard';
 import Pagination from './Pagination';
 
-export default function ApplicantListPageClient({ 
-  applicants,
-  currentPage,
-  totalApplicants,
-  applicantsPerPage,
- }) {
+export default function ApplicantListPageClient({
+  applicants = [],
+  currentPage = 1,
+  totalApplicants = 0,
+  applicantsPerPage = 5,
+  onPageChange,
+}) {
   const router = useRouter();
 
   const paginate = (pageNumber) => {
-    router.push(`/admin/applicants?page=${pageNumber}`);
+    if (onPageChange) {
+      onPageChange(pageNumber);
+    } else {
+      router.push(`/admin/applicants?page=${pageNumber}`);
+    }
   };
 
   const nextPage = () => {

@@ -12,6 +12,7 @@ export default function AdminJobsPage() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { admin } = useAdminAuth();
   const router = useRouter();
 
@@ -77,10 +78,10 @@ export default function AdminJobsPage() {
     return (
       <AdminAuthGuard>
         <div className="flex min-h-screen flex-col bg-orange-50 text-gray-700">
-          <Header />
+          <Header isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
           <main className="mx-auto mb-8 mt-8 w-full max-w-6xl flex-grow px-4">
             <div className="flex items-center justify-center py-12">
-              <p className="text-lg text-gray-600">読み込み中...</p>
+              <p className="text-lg text-gray-600">読み込み中</p>
             </div>
           </main>
           <Footer />
@@ -92,7 +93,7 @@ export default function AdminJobsPage() {
   return (
     <AdminAuthGuard>
       <div className="flex min-h-screen flex-col bg-orange-50 text-gray-700">
-        <Header />
+        <Header isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
         <main className="mx-auto mb-8 mt-8 w-full max-w-6xl flex-grow px-4">
           <div className="rounded-lg bg-white p-8 shadow-md">
             <div className="mb-6 flex items-center justify-between">
