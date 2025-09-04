@@ -79,18 +79,12 @@ function AdminJobsPageContent() {
       <main className="mx-auto mb-8 mt-8 w-full max-w-6xl flex-grow px-4">
         {isFetching ? (
           <div className="flex items-center justify-center py-12">
-            <p className="text-lg text-gray-600">読み込み中...</p>
+            <p className="text-lg text-gray-600">読み込み中</p>
           </div>
         ) : (
           <div className="rounded-lg bg-white p-8 shadow-md">
             <div className="mb-6 flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between">
               <h1 className="text-3xl font-bold text-blue-800">掲載求人一覧</h1>
-              <button
-                onClick={() => router.push('/admin/job-create')}
-                className="rounded-lg bg-orange-500 px-6 py-2 font-bold text-white transition-colors hover:bg-orange-600"
-              >
-                新規求人作成
-              </button>
             </div>
 
             {error && (
@@ -101,7 +95,9 @@ function AdminJobsPageContent() {
 
             {allAdminJobs.length === 0 ? (
               <div className="py-12 text-center">
-                <p className="mb-4 text-lg text-gray-600">まだ求人が登録されていません</p>
+                <p className="mb-4 text-lg text-gray-600">
+                  まだ求人が登録されていません
+                </p>
                 <button
                   onClick={() => router.push('/admin/job-create')}
                   className="rounded-lg bg-orange-500 px-6 py-2 font-bold text-white transition-colors hover:bg-orange-600"
@@ -125,9 +121,15 @@ function AdminJobsPageContent() {
                             className="mb-3 h-32 w-full rounded-md object-cover"
                           />
                         )}
-                        <h3 className="mb-2 text-lg font-bold text-gray-900">{job.title}</h3>
-                        <p className="mb-2 text-sm text-gray-600">{job.company}</p>
-                        <p className="line-clamp-3 text-sm text-gray-700">{job.description}</p>
+                        <h3 className="mb-2 text-lg font-bold text-gray-900">
+                          {job.title}
+                        </h3>
+                        <p className="mb-2 text-sm text-gray-600">
+                          {job.company}
+                        </p>
+                        <p className="line-clamp-3 text-sm text-gray-700">
+                          {job.description}
+                        </p>
                       </div>
                       <div className="mb-4 text-sm text-gray-600">
                         <p>時給: ¥{job.wage?.toLocaleString()}</p>

@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import AdminAuthGuard from '@/app/components/AdminAuthGuard';
@@ -19,6 +20,7 @@ export default function CreateJobPage() {
     workinghours: '',
   });
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const router = useRouter();
 
   // DBから選択肢取得
   const { lines, wages, occupations, loading } =
@@ -116,6 +118,7 @@ export default function CreateJobPage() {
           }));
           setImageFile(null);
           setImagePreview('');
+          router.push('/admin/jobs'); // リダイレクト
         } else {
           alert('登録に失敗しました: ' + (data.error || '不明なエラー'));
         }
@@ -132,7 +135,7 @@ export default function CreateJobPage() {
         <Header isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
         <main className="mx-auto mb-8 mt-8 w-full max-w-2xl flex-grow px-4">
           <div className="rounded-lg bg-white p-8 shadow-md">
-            <h1 className="mb-6 text-center text-3xl font-bold text-blue-800">
+            <h1 className="mb-6 text-start text-3xl font-bold text-blue-800">
               新規求人作成
             </h1>
             <form onSubmit={handleSubmit} className="space-y-6">
