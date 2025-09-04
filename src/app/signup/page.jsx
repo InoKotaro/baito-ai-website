@@ -23,12 +23,11 @@ export default function SignUp() {
     setMessage('');
     setIsLoading(true);
 
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
-          // ここで追加情報を渡します
           full_name: name,
         },
       },
@@ -36,14 +35,28 @@ export default function SignUp() {
 
     if (error) {
       setError(error.message);
-    } else {
-      setMessage('登録が完了しました。\nトップページへ自動で移ります。');
-      setName('');
-      setEmail('');
-      setPassword('');
-      setTimeout(() => {
-        router.push('/');
-      }, 3000); // 3秒後にトップページへリダイレクト
+    } else if (data.user) {
+      // Also create a record in our public User table
+      // Let the DB auto-generate the integer ID
+      const { error: insertError } = await supabase.from('User').insert([
+        {
+          name: name,
+          email: email,
+          password: '' // Never store plaintext passwords
+        },
+      ]);
+
+      if (insertError) {
+        setError(insertError.message);
+      } else {
+        setMessage('登録が完了しました。\nトップページへ自動で移ります。');
+        setName('');
+        setEmail('');
+        setPassword('');
+        setTimeout(() => {
+          router.push('/');
+        }, 3000); // 3秒後にトップページへリダイレクト
+      }
     }
     setIsLoading(false);
   };

@@ -3,68 +3,28 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 
+import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/lib/supabaseClient';
 
 export default function PublicHeader({ isMenuOpen, setIsMenuOpen, onLogoClick }) {
-  const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-
-  useEffect(() => {
-    let mounted = true;
-
-    const getSession = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (mounted) {
-          setUser(session?.user ?? null);
-          setIsLoading(false);
-        }
-      } catch (error) {
-        console.error('セッション取得エラー:', error);
-        if (mounted) {
-          setUser(null);
-          setIsLoading(false);
-        }
-      }
-    };
-
-    getSession();
-
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (mounted) {
-          setUser(session?.user ?? null);
-        }
-      },
-    );
-
-    return () => {
-      mounted = false;
-      authListener.subscription.unsubscribe();
-    };
-  }, []);
+  const { user, dbUser, loading: isLoading } = useAuth(); // Use context
 
   const handleLogout = async () => {
     try {
-      setIsLoading(true);
       const { error } = await supabase.auth.signOut();
       if (error) {
         console.error('ログアウトエラー:', error);
         return;
       }
-      setUser(null);
       router.push('/login');
     } catch (error) {
       console.error('ログアウトエラー:', error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
-  const NavLinks = ({ user, isMobile = false, onLogout, onLinkClick, onHomeClick }) => {
+  const NavLinks = ({ isMobile = false, onLinkClick, onHomeClick }) => {
     const navItems = [{ href: '/', label: 'ホーム' }];
     if (!isLoading && user) {
       navItems.push({ href: '/applications', label: '応募一覧' });
@@ -72,7 +32,7 @@ export default function PublicHeader({ isMenuOpen, setIsMenuOpen, onLogoClick })
     }
 
     const handleLogoutClick = async () => {
-      await onLogout();
+      await handleLogout();
       if (onLinkClick) onLinkClick();
     };
 
@@ -121,7 +81,7 @@ export default function PublicHeader({ isMenuOpen, setIsMenuOpen, onLogoClick })
                 className={`block text-gray-600 hover:text-orange-500 ${isMobile ? 'py-6' : ''}`}
                 onClick={onLinkClick}
               >
-                新規登録
+              新規登録
               </Link>
             </li>
           </>
@@ -129,6 +89,8 @@ export default function PublicHeader({ isMenuOpen, setIsMenuOpen, onLogoClick })
       </>
     );
   };
+
+  const displayName = dbUser?.name || user?.email;
 
   return (
     <header className="sticky top-0 z-20 border-b-4 border-orange-400 bg-white shadow-sm">
@@ -154,8 +116,8 @@ export default function PublicHeader({ isMenuOpen, setIsMenuOpen, onLogoClick })
 
         <nav className="hidden md:block">
           <ul className="text-md flex items-center gap-6 font-bold">
-            {!isLoading && user && <li className="text-blue-700">こんにちは {user.user_metadata?.full_name || user.email}さん</li>}
-            <NavLinks user={user} onLogout={handleLogout} onHomeClick={onLogoClick} />
+            {!isLoading && user && <li className="text-blue-700">こんにちは {displayName}さん</li>}
+            <NavLinks onHomeClick={onLogoClick} />
           </ul>
         </nav>
       </div>
@@ -185,8 +147,8 @@ export default function PublicHeader({ isMenuOpen, setIsMenuOpen, onLogoClick })
           </svg>
         </button>
         <ul className="flex flex-col pt-16 font-bold">
-          {!isLoading && user && <li className="border-b-2 border-orange-400 py-6 text-blue-700">こんにちは {user.user_metadata?.full_name || user.email}さん</li>}
-          <NavLinks user={user} isMobile onLogout={handleLogout} onLinkClick={() => setIsMenuOpen(false)} onHomeClick={onLogoClick} />
+          {!isLoading && user && <li className="border-b-2 border-orange-400 py-6 text-blue-700">こんにちは {displayName}さん</li>}
+          <NavLinks isMobile onLinkClick={() => setIsMenuOpen(false)} onHomeClick={onLogoClick} />
         </ul>
       </nav>
     </header>
