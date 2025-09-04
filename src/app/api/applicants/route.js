@@ -4,11 +4,6 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin';
 
 export async function GET(request) {
   try {
-    const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1', 10);
-    const limit = parseInt(searchParams.get('limit') || '5', 10);
-    const offset = (page - 1) * limit;
-
     // 応募者情報を取得（求人とユーザー情報を含む）
     const { data, error, count } = await supabaseAdmin
       .from('JobApplication')
@@ -21,8 +16,7 @@ export async function GET(request) {
       `,
         { count: 'exact' },
       )
-      .order('appliedat', { ascending: false })
-      .range(offset, offset + limit - 1);
+      .order('appliedat', { ascending: false });
 
     if (error) {
       console.error('応募者取得エラー:', error);
@@ -38,16 +32,16 @@ export async function GET(request) {
       name: app.user?.name || '名前不明',
       email: app.user?.email || 'メール不明',
       appliedDate: new Date(app.appliedat).toLocaleDateString('ja-JP'),
-      jobTitle: app.job?.jobtitle || '求人タイトル不明',
-      companyName: app.job?.companyname || '企業名不明',
+      job: {
+        jobtitle: app.job?.jobtitle || '求人タイトル不明',
+        company: app.job?.companyname || '企業名不明',
+      },
     }));
 
     return NextResponse.json({
       success: true,
       applicants: formattedApplicants,
       totalCount: count || 0,
-      currentPage: page,
-      totalPages: Math.ceil((count || 0) / limit),
     });
   } catch (error) {
     console.error('応募者取得APIエラー:', error);

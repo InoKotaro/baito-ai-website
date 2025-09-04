@@ -14,13 +14,15 @@ export default function Pagination({
     <nav className="mt-8 flex justify-center" aria-label="Page navigation">
       <ul className="inline-flex items-center -space-x-px">
         {/* 前のページボタン */}
-        <button
-          onClick={prevPage}
-          disabled={currentPage === 1}
-          className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          ＜
-        </button>
+        {totalPages > 1 && (
+          <button
+            onClick={prevPage}
+            disabled={currentPage === 1}
+            className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            ＜
+          </button>
+        )}
 
         {/* ページ番号ボタン */}
         <div className="flex min-w-[200px] items-center justify-center">
@@ -60,13 +62,15 @@ export default function Pagination({
         </div>
 
         {/* 次のページボタン */}
-        <button
-          onClick={nextPage}
-          disabled={currentPage === totalPages}
-          className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          ＞
-        </button>
+        {totalPages > 1 && (
+          <button
+            onClick={nextPage}
+            disabled={currentPage === totalPages}
+            className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            ＞
+          </button>
+        )}
       </ul>
     </nav>
   );
