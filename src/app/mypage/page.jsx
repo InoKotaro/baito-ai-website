@@ -8,6 +8,13 @@ import Header from '@/app/components/Header';
 import { supabase } from '@/lib/supabaseClient';
 
 export default function MyPage() {
+  // デモ用アカウント削除不可化メールアドレス
+  const PROTECTED_EMAILS = [
+    'tester@example.com',
+    'demouser@example.com',
+    'demo@example.com',
+  ];
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [dbUser, setDbUser] = useState(null);
@@ -62,28 +69,55 @@ export default function MyPage() {
   }, [router]);
 
   const handleUpdateName = async () => {
-    if (!dbUser) return;
+    console.log('handleUpdateName: started');
+    if (!dbUser) {
+      console.log('handleUpdateName: dbUser is null, returning.');
+      return;
+    }
     setBusy(true);
     setError('');
     setInfo('');
-    const { error } = await supabase
-      .from('User')
-      .update({ name })
-      .eq('id', dbUser.id);
-    if (error) {
-      setError('名前の更新に失敗しました。');
-    } else {
-      // ヘッダーが参照する user_metadata.full_name も更新
-      const { error: metaErr } = await supabase.auth.updateUser({
-        data: { full_name: name },
-      });
-      if (metaErr) {
-        console.error('Failed to update auth user metadata:', metaErr);
+    console.log('handleUpdateName: busy set to true.');
+    try {
+      console.log('handleUpdateName: Updating user in DB...');
+      const { error } = await supabase
+        .from('User')
+        .update({ name })
+        .eq('id', dbUser.id);
+      console.log('handleUpdateName: DB update finished. Error:', error);
+      if (error) {
+        setError('名前の更新に失敗しました。');
+        console.log('handleUpdateName: DB update failed.');
+      } else {
+        console.log(
+          'handleUpdateName: DB update successful. Updating auth user metadata...',
+        );
+        // ヘッダーが参照する user_metadata.full_name も更新
+        const timeoutPromise = new Promise((resolve, reject) =>
+          setTimeout(() => reject(new Error('Auth update timed out')), 15000),
+        );
+        const { error: metaErr } = await Promise.race([
+          supabase.auth.updateUser({ data: { full_name: name } }),
+          timeoutPromise,
+        ]);
+        console.log(
+          'handleUpdateName: Auth metadata update finished. Error:',
+          metaErr,
+        );
+        if (metaErr) {
+          console.error('Failed to update auth user metadata:', metaErr);
+        }
+        setInfo('名前を更新しました。');
+        setDbUser({ ...dbUser, name });
+        console.log('handleUpdateName: Name updated successfully.');
       }
-      setInfo('名前を更新しました。');
-      setDbUser({ ...dbUser, name });
+    } catch (err) {
+      console.error('handleUpdateName: Caught unexpected error:', err);
+      setError('名前の更新中に予期せぬエラーが発生しました。');
+    } finally {
+      console.log('handleUpdateName: finally block - setting busy to false.');
+      setBusy(false);
     }
-    setBusy(false);
   };
 
   // メール・パスワード変更機能は削除
@@ -208,12 +242,14 @@ export default function MyPage() {
               </h2>
               <p className="mb-4 text-sm text-gray-600">
                 応募データを含むアカウント情報を削除します。
+                <br />
+                （デモ用アカウントを除く）
               </p>
               <div className="flex justify-center">
                 <button
                   onClick={handleDeleteAccount}
-                  disabled={busy}
-                  className={`rounded bg-red-600 px-6 py-2 font-bold text-white ${busy ? 'opacity-60' : 'hover:bg-red-700'}`}
+                  disabled={busy || PROTECTED_EMAILS.includes(user?.email)}
+                  className={`rounded bg-red-600 px-6 py-2 font-bold text-white ${busy || PROTECTED_EMAILS.includes(user?.email) ? 'cursor-not-allowed opacity-60' : 'hover:bg-red-700'}`}
                 >
                   アカウントを削除
                 </button>

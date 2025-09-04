@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 
-import ApplyButton from '@/app/components/ApplyButton';
 import ApplySectionClient from '@/app/components/ApplySectionClient';
 import BackButton from '@/app/components/BackButton';
 import Footer from '@/app/components/Footer';
