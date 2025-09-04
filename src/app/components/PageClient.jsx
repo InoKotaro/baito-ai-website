@@ -32,6 +32,7 @@ export default function JobPortfolioSite() {
     if (form.line) query = query.eq('lineid', form.line);
     if (form.wage) query = query.gte('hourlywage', Number(form.wage));
     if (form.occupation) query = query.eq('occupationid', form.occupation);
+    query = query.order('id', { ascending: false }); // Add order here
     const { data, error } = await query;
     if (error) {
       setError('求人情報の取得に失敗しました。');
@@ -53,7 +54,8 @@ export default function JobPortfolioSite() {
       .from('Job')
       .select(
         '*, occupation:Occupation(occupationName:occupationname), line:Line(lineName:linename, railwayCompany:RailwayCompany(railwayCompanyName:name))',
-      );
+      )
+      .order('id', { ascending: false });
 
     if (error) {
       setError('求人情報の取得に失敗しました。');
@@ -91,7 +93,7 @@ export default function JobPortfolioSite() {
         .from('Job')
         .select(
           '*, occupation:Occupation(occupationName:occupationname), line:Line(lineName:linename, railwayCompany:RailwayCompany(railwayCompanyName:name))',
-        );
+        ).order('id', { ascending: false });
       if (error) {
         setError('求人情報の取得に失敗しました。');
       } else {
@@ -100,7 +102,7 @@ export default function JobPortfolioSite() {
       setIsLoading(false);
     };
     fetchJobs();
-  }, []);
+  }, [searchParams]);
 
   // スクロールイベントの処理
   useEffect(() => {

@@ -8,7 +8,7 @@ export async function GET(request) {
     // GETリクエストは公開情報なので、RLSを有効にするために通常のクライアントを使うのが望ましい
     // しかし、このファイルではadminクライアントしかインポートしないため、このまま進める
     // 本来はクライアントを使い分けるべき
-    const { data, error } = await supabaseAdmin.from('Job').select('*');
+    const { data, error } = await supabaseAdmin.from('Job').select('*').order('id', { ascending: false });
     if (error) {
       throw new Error(error.message);
     }

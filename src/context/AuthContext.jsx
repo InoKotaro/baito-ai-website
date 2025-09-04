@@ -17,7 +17,7 @@ const getAdminCompany = async (user) => {
       .eq('email', user.email)
       .single();
     if (error) {
-      console.error('[getAdminCompany] Supabase error:', error);
+      
       return null;
     }
     return data;

@@ -7,7 +7,6 @@ import JobCard from '@/app/components/JobCard';
 import Pagination from '@/app/components/Pagination';
 import ScrollToTopButton from '@/app/components/ScrollToTopButton';
 import SearchBar from '@/app/components/SearchBar';
-import StickySearchBar from '@/app/components/StickySearchBar';
 import { supabase } from '@/lib/supabaseClient';
 
 import useSearchOptions from '../hooks/useSearchOptions';
@@ -107,17 +106,6 @@ export default function JobPortfolioSite() {
     <div className="flex min-h-screen flex-col bg-orange-50 text-gray-700">
       {/* ヘッダー */}
       <Header />
-
-      {/* 固定表示用の検索バー */}
-      <div
-        className={`fixed left-0 right-0 top-0 z-30 bg-orange-50/95 shadow-md backdrop-blur-sm transition-opacity duration-300 ease-in-out ${
-          isSticky ? 'opacity-100' : 'pointer-events-none opacity-0'
-        }`}
-      >
-        <div className="mx-auto w-full max-w-4xl px-4 py-2">
-          <StickySearchBar />
-        </div>
-      </div>
 
       <main className="mx-auto mt-8 w-full max-w-4xl flex-grow px-4">
         {/* 検索セクション */}

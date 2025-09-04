@@ -1,8 +1,8 @@
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 
-import AdminJobActions from '@/app/components/AdminJobActions';
 import ApplyButton from '@/app/components/ApplyButton';
+import ApplySectionClient from '@/app/components/ApplySectionClient';
 import BackButton from '@/app/components/BackButton';
 import Footer from '@/app/components/Footer';
 import Header from '@/app/components/Header';
@@ -99,8 +99,8 @@ export default async function JobDetailPage({ params }) {
 
           <div className="mt-6 flex justify-center gap-4">
             <BackButton />
-            <ApplyButton jobId={job.id} />
-            <AdminJobActions jobId={job.id} companyName={job.companyname} />
+            {/* ログインしている場合のみApplyButtonを表示 */}
+            <ApplySectionClient jobId={job.id} />
           </div>
         </article>
       </main>
