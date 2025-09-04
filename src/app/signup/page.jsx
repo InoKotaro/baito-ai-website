@@ -42,7 +42,7 @@ export default function SignUp() {
         {
           name: name,
           email: email,
-          password: '' // Never store plaintext passwords
+          password: '', // Never store plaintext passwords
         },
       ]);
 
@@ -64,7 +64,7 @@ export default function SignUp() {
   return (
     <div className="flex min-h-screen flex-col bg-orange-50 text-gray-700">
       <Header />
-      <main className="mx-auto mt-24 w-full max-w-md flex-grow px-4">
+      <main className="mx-auto mt-9 w-full max-w-md flex-grow px-4 md:mt-24">
         <div className="rounded-lg bg-white p-8 shadow-md">
           <h1 className="mb-6 text-center text-2xl font-bold">新規登録</h1>
           <form onSubmit={handleSignUp}>

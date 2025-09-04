@@ -286,18 +286,18 @@ export async function GET() {
     console.log(`=== クリーンアップ処理完了 ===`);
     console.log(`削除されたユーザー: ${deletedUsers}件`);
     console.log(`削除されたJob: ${deletedJobs}件`);
-    console.log(`削除されたファイル: ${deletedFiles}件`); // 追加
+    console.log(`削除されたファイル: ${deletedFiles}件`); 
 
     // 削除後の確認処理
     try {
       console.log('削除後のユーザー数を確認中...');
-      const { data: remainingUsersData, error: remainingError } = // 変数名を変更
+      const { data: remainingUsersData, error: remainingError } = 
         await supabase.auth.admin.listUsers();
 
       if (remainingError) {
         console.error('削除後のユーザー数確認エラー:', remainingError);
       } else {
-        remainingUsers = remainingUsersData; // 修正
+        remainingUsers = remainingUsersData; 
         console.log(
           `削除後の残存ユーザー数: ${remainingUsers ? remainingUsers.length : 0}`,
         );
@@ -317,7 +317,7 @@ export async function GET() {
       message: 'Cleanup completed',
       deletedUsers,
       deletedJobs,
-      deletedFiles, // 追加
+      deletedFiles,
       remainingUsers: remainingUsers ? remainingUsers.length : 0,
       timestamp: new Date().toISOString(),
     });

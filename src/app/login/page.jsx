@@ -12,7 +12,6 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
 
   const handleLogin = async (e) => {
@@ -41,8 +40,8 @@ export default function Login() {
 
   return (
     <div className="flex min-h-screen flex-col bg-orange-50 text-gray-700">
-      <Header isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
-      <main className="mx-auto mt-24 w-full max-w-md flex-grow px-4">
+      <Header />
+      <main className="mx-auto mt-9 w-full max-w-md flex-grow px-4 md:mt-24">
         <div className="rounded-lg bg-white p-8 shadow-md">
           <h1 className="mb-6 text-center text-2xl font-bold">ログイン</h1>
           <form onSubmit={handleLogin}>
