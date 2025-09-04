@@ -71,7 +71,9 @@ export default function ApplicantsPage() {
     return (
       <AdminAuthGuard>
         <div className="flex min-h-screen flex-col bg-orange-50 text-gray-700">
-          {admin && <Header isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />}
+          {admin && (
+            <Header isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
+          )}
           <main className="mx-auto mb-8 mt-8 w-full max-w-6xl flex-grow px-4">
             <div className="flex items-center justify-center py-12">
               <p className="text-lg text-gray-600">読み込み中</p>
@@ -86,7 +88,9 @@ export default function ApplicantsPage() {
   return (
     <AdminAuthGuard>
       <div className="flex min-h-screen flex-col bg-orange-50 text-gray-700">
-        {admin && <Header isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />}
+        {admin && (
+          <Header isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
+        )}
         <main className="mx-auto mb-8 mt-8 w-full max-w-6xl flex-grow px-4">
           <div className="rounded-lg bg-white p-8 shadow-md">
             <h1 className="mb-6 text-3xl font-bold text-blue-800">

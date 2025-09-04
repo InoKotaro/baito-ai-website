@@ -1,12 +1,12 @@
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 
+import AdminJobActions from '@/app/components/AdminJobActions';
 import ApplyButton from '@/app/components/ApplyButton';
 import BackButton from '@/app/components/BackButton';
 import Footer from '@/app/components/Footer';
 import Header from '@/app/components/Header';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
-import AdminJobActions from '@/app/components/AdminJobActions';
 
 // 画像が設定されていない場合の代替画像のパス
 const FALLBACK_IMAGE_URL = '/images/no-image.jpg';
