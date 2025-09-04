@@ -11,6 +11,7 @@ export async function GET() {
   try {
     let deletedUsers = 0;
     let deletedJobs = 0;
+    let deletedFiles = 0; // 追加
     let remainingUsers = null;
 
     console.log('=== クリーンアップ処理開始 ===');
@@ -218,7 +219,7 @@ export async function GET() {
       );
     }
 
-    const jobsToDelete = jobs ? jobs.slice(34) : []; // 35個目以降
+    const jobsToDelete = jobs ? jobs.slice(35) : []; // 36個目以降
     console.log(`削除対象Job数: ${jobsToDelete.length}`);
 
     if (jobsToDelete.length > 0) {
@@ -241,19 +242,62 @@ export async function GET() {
       console.log('削除対象のJobはありません（36件以下）');
     }
 
+    // -------------------------------
+    // 3. Supabase Storage 35個目以降削除
+    // -------------------------------
+    const BUCKET_NAME = 'BaitoAI-images';
+    console.log(`Storageバケット「${BUCKET_NAME}」のファイル一覧を取得中`);
+
+    const { data: files, error: fileError } = await supabase.storage
+      .from(BUCKET_NAME)
+      .list();
+
+    if (fileError) {
+      console.error('Storageファイル一覧取得エラー:', fileError);
+    } else {
+      console.log(`取得したファイル数: ${files.length}`);
+
+      // 作成日時でファイルをソート（古い順）
+      files.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+      if (files.length > 35) {
+        const filesToDelete = files.slice(35);
+        console.log(`削除対象ファイル数: ${filesToDelete.length}`);
+
+        const filePathsToDelete = filesToDelete.map((f) => f.name);
+
+        if (filePathsToDelete.length > 0) {
+          console.log('削除対象ファイルパス:', filePathsToDelete);
+          const { data: deleteData, error: deleteError } =
+            await supabase.storage.from(BUCKET_NAME).remove(filePathsToDelete);
+
+          if (deleteError) {
+            console.error('Storageファイル削除エラー:', deleteError);
+          } else {
+            console.log('Storageファイル削除成功:', deleteData);
+            deletedFiles = deleteData.length;
+          }
+        }
+      } else {
+        console.log('削除対象のファイルはありません（35件以下）');
+      }
+    }
+
     console.log(`=== クリーンアップ処理完了 ===`);
     console.log(`削除されたユーザー: ${deletedUsers}件`);
     console.log(`削除されたJob: ${deletedJobs}件`);
+    console.log(`削除されたファイル: ${deletedFiles}件`); // 追加
 
     // 削除後の確認処理
     try {
       console.log('削除後のユーザー数を確認中...');
-      const { data: remainingUsers, error: remainingError } =
+      const { data: remainingUsersData, error: remainingError } = // 変数名を変更
         await supabase.auth.admin.listUsers();
 
       if (remainingError) {
         console.error('削除後のユーザー数確認エラー:', remainingError);
       } else {
+        remainingUsers = remainingUsersData; // 修正
         console.log(
           `削除後の残存ユーザー数: ${remainingUsers ? remainingUsers.length : 0}`,
         );
@@ -273,6 +317,7 @@ export async function GET() {
       message: 'Cleanup completed',
       deletedUsers,
       deletedJobs,
+      deletedFiles, // 追加
       remainingUsers: remainingUsers ? remainingUsers.length : 0,
       timestamp: new Date().toISOString(),
     });
