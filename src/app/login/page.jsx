@@ -86,7 +86,8 @@ export default function Login() {
             {error && <p className="mt-4 text-center text-red-500">{error}</p>}
           </form>
           <p className="mt-6 text-center text-sm">
-            アカウントをお持ちでないですか？{' '}
+            アカウントをお持ちでないですか？
+            <br />
             <Link href="/signup" className="text-orange-600 hover:underline">
               新規登録
             </Link>

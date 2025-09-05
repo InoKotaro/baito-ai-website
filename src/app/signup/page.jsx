@@ -98,7 +98,7 @@ export default function SignUp() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                placeholder="example@email.com"
+                placeholder="sample@example.com"
                 className="w-full rounded-md border border-gray-300 p-2 focus:border-orange-500 focus:outline-none focus:ring"
               />
             </div>
@@ -137,7 +137,8 @@ export default function SignUp() {
             )}
           </form>
           <p className="mt-6 text-center text-sm">
-            すでにアカウントをお持ちですか？{' '}
+            すでにアカウントをお持ちですか？
+            <br />
             <Link href="/login" className="text-orange-600 hover:underline">
               ログイン
             </Link>
