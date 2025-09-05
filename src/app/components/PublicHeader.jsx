@@ -3,11 +3,13 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/lib/supabaseClient';
 
-export default function PublicHeader({ isMenuOpen, setIsMenuOpen, onLogoClick }) {
+export default function PublicHeader({ onLogoClick }) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
   const { user, dbUser, loading: isLoading } = useAuth(); // Use context
 
@@ -44,7 +46,10 @@ export default function PublicHeader({ isMenuOpen, setIsMenuOpen, onLogoClick })
     return (
       <>
         {navItems.map((item) => (
-          <li key={item.href} className={isMobile ? 'border-b-2 border-orange-400' : ''}>
+          <li
+            key={item.href}
+            className={isMobile ? 'border-b-2 border-orange-400' : ''}
+          >
             <Link
               href={item.href}
               className={`block text-gray-600 hover:text-orange-500 ${isMobile ? 'py-6' : ''}`}
@@ -81,7 +86,7 @@ export default function PublicHeader({ isMenuOpen, setIsMenuOpen, onLogoClick })
                 className={`block text-gray-600 hover:text-orange-500 ${isMobile ? 'py-6' : ''}`}
                 onClick={onLinkClick}
               >
-              新規登録
+                新規登録
               </Link>
             </li>
           </>
@@ -95,8 +100,18 @@ export default function PublicHeader({ isMenuOpen, setIsMenuOpen, onLogoClick })
   return (
     <header className="sticky top-0 z-20 border-b-4 border-orange-400 bg-white shadow-sm">
       <div className="container mx-auto flex items-center justify-between px-4 py-4 md:px-6">
-        <Link href="/" className="flex items-center gap-3" onClick={onLogoClick}>
-          <Image src="/images/BaitoAI-logo.png" alt="Baito AI ロゴ" width={150} height={40} priority />
+        <Link
+          href="/"
+          className="flex items-center gap-3"
+          onClick={onLogoClick}
+        >
+          <Image
+            src="/images/BaitoAI-logo.png"
+            alt="Baito AI ロゴ"
+            width={150}
+            height={40}
+            priority
+          />
         </Link>
 
         {!isMenuOpen && (
@@ -107,8 +122,18 @@ export default function PublicHeader({ isMenuOpen, setIsMenuOpen, onLogoClick })
               className="text-gray-700 hover:text-orange-500 focus:outline-none"
               aria-label="メニューを開閉する"
             >
-              <svg className="h-9 w-9" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+              <svg
+                className="h-9 w-9"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
               </svg>
             </button>
           </div>
@@ -116,7 +141,9 @@ export default function PublicHeader({ isMenuOpen, setIsMenuOpen, onLogoClick })
 
         <nav className="hidden md:block">
           <ul className="text-md flex items-center gap-6 font-bold">
-            {!isLoading && user && <li className="text-blue-700">こんにちは {displayName}さん</li>}
+            {!isLoading && user && (
+              <li className="text-blue-700">こんにちは {displayName}さん</li>
+            )}
             <NavLinks onHomeClick={onLogoClick} />
           </ul>
         </nav>
@@ -142,13 +169,31 @@ export default function PublicHeader({ isMenuOpen, setIsMenuOpen, onLogoClick })
           className="absolute right-6 top-4 text-gray-700 hover:text-orange-500 focus:outline-none"
           aria-label="メニューを閉じる"
         >
-          <svg className="h-9 w-9" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+          <svg
+            className="h-9 w-9"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
           </svg>
         </button>
         <ul className="flex flex-col pt-16 font-bold">
-          {!isLoading && user && <li className="border-b-2 border-orange-400 py-6 text-blue-700">こんにちは {displayName}さん</li>}
-          <NavLinks isMobile onLinkClick={() => setIsMenuOpen(false)} onHomeClick={onLogoClick} />
+          {!isLoading && user && (
+            <li className="border-b-2 border-orange-400 py-6 text-blue-700">
+              こんにちは {displayName}さん
+            </li>
+          )}
+          <NavLinks
+            isMobile
+            onLinkClick={() => setIsMenuOpen(false)}
+            onHomeClick={onLogoClick}
+          />
         </ul>
       </nav>
     </header>
