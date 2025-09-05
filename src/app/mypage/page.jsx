@@ -39,6 +39,12 @@ export default function MyPage() {
   }, [user, dbUser, loading, router]);
 
   const handleUpdateNameClick = async () => {
+    // PROTECTED_EMAILSに含まれるメールアドレスのユーザーは名前変更できないようにする
+    if (PROTECTED_EMAILS.includes(user?.email)) {
+      setError('このアカウントの名前は変更できません。');
+      return;
+    }
+
     if (dbUser) {
       setBusy(true);
       setError('');
@@ -130,13 +136,14 @@ export default function MyPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="お名前"
+                disabled={PROTECTED_EMAILS.includes(user?.email)}
               />
               <div className="flex justify-center">
                 <button
                   onClick={handleUpdateNameClick}
-                  disabled={busy || (dbUser && name === dbUser.name)}
+                  disabled={busy || (dbUser && name === dbUser.name) || PROTECTED_EMAILS.includes(user?.email)}
                   className={`rounded bg-orange-500 px-6 py-2 font-bold text-white ${
-                    busy || (dbUser && name === dbUser.name)
+                    busy || (dbUser && name === dbUser.name) || PROTECTED_EMAILS.includes(user?.email)
                       ? 'cursor-not-allowed opacity-60'
                       : 'hover:bg-orange-600'
                   }`}
