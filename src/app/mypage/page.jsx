@@ -6,8 +6,7 @@ import { useEffect, useState } from 'react';
 import Footer from '@/app/components/Footer';
 import Header from '@/app/components/Header';
 import { useAuth } from '@/context/AuthContext';
-import { supabase } from '@/lib/supabaseClient'; // supabase is needed for handleDeleteAccount
-import { updateUserName } from '@/lib/updateUser';
+import { supabase } from '@/lib/supabaseClient'; // supabase is needed for both actions now
 
 export default function MyPage() {
   const PROTECTED_EMAILS = [
@@ -39,7 +38,6 @@ export default function MyPage() {
   }, [user, dbUser, loading, router]);
 
   const handleUpdateNameClick = async () => {
-    // PROTECTED_EMAILSに含まれるメールアドレスのユーザーは名前変更できないようにする
     if (PROTECTED_EMAILS.includes(user?.email)) {
       setError('このアカウントの名前は変更できません。');
       return;
@@ -50,9 +48,32 @@ export default function MyPage() {
       setError('');
       setInfo('');
       try {
-        await updateUserName(dbUser.id, name);
+        const { data: { session } } = await supabase.auth.getSession();
+        const accessToken = session?.access_token;
+
+        if (!accessToken) {
+          throw new Error('認証されていません。再度ログインしてください。');
+        }
+
+        const res = await fetch('/api/update-username', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({ newName: name }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || '名前の更新に失敗しました。');
+        }
+
         setInfo('名前を更新しました。');
-        await refreshDbUser(); // Manually refresh the context data
+        await refreshDbUser(); // Refresh custom user data
+        // The auth user in context will be stale until next login/refresh.
+        // But we prioritize dbUser.name for display, so visual update is fine.
       } catch (e) {
         setError(e.message);
       } finally {
