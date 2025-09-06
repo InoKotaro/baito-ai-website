@@ -62,15 +62,18 @@ export async function POST(req) {
       const { error: deleteApplicationsError } = await supabaseAdmin
         .from('JobApplication')
         .delete()
-        .eq('userId', customUser.id);
+        .eq('userid', customUser.id);
 
       if (deleteApplicationsError) {
+        const errorDetailsString = JSON.stringify(deleteApplicationsError);
         console.error(
           'Error deleting job applications:',
           deleteApplicationsError,
         );
         return NextResponse.json(
-          { error: "Failed to delete user's applications." },
+          {
+            error: `Failed to delete user's applications. Details: ${errorDetailsString}`,
+          },
           { status: 500 },
         );
       }
