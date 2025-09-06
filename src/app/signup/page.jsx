@@ -2,11 +2,11 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import Footer from '@/app/components/Footer';
 import Header from '@/app/components/Header';
-import { supabase } from '@/lib/supabaseClient';
+import { useAuth } from '@/context/AuthContext';
 
 export default function SignUp() {
   const [name, setName] = useState('');
@@ -16,6 +16,7 @@ export default function SignUp() {
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { signUp } = useAuth();
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -23,42 +24,21 @@ export default function SignUp() {
     setMessage('');
     setIsLoading(true);
 
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: name,
-        },
-      },
-    });
+    try {
+      await signUp(name, email, password);
 
-    if (error) {
+      setMessage('登録が完了しました。\nトップページへ自動で移ります。');
+      setName('');
+      setEmail('');
+      setPassword('');
+      setTimeout(() => {
+        router.push('/');
+      }, 3000);
+    } catch (error) {
       setError(error.message);
-    } else if (data.user) {
-      // Also create a record in our public User table
-      // Let the DB auto-generate the integer ID
-      const { error: insertError } = await supabase.from('User').insert([
-        {
-          name: name,
-          email: email,
-          password: '', // Never store plaintext passwords
-        },
-      ]);
-
-      if (insertError) {
-        setError(insertError.message);
-      } else {
-        setMessage('登録が完了しました。\nトップページへ自動で移ります。');
-        setName('');
-        setEmail('');
-        setPassword('');
-        setTimeout(() => {
-          router.push('/');
-        }, 3000); // 3秒後にトップページへリダイレクト
-      }
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   return (
