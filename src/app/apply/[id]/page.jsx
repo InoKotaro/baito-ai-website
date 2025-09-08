@@ -35,7 +35,7 @@ const getJobById = async (id) => {
 };
 
 export default function ApplyPage({ params }) {
-  const { id } = React.use(params);
+  const { id } = params;
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -222,13 +222,6 @@ export default function ApplyPage({ params }) {
                   {job.companyname}
                 </p>
                 <p className="text-start text-base">
-                  <strong>職種:</strong>{' '}
-                  {job.occupation?.occupationName ?? '未設定'}
-                  <br />
-                  <strong>路線:</strong>{' '}
-                  {job.line?.railwayCompany?.railwayCompanyName ?? ''}{' '}
-                  {job.line?.lineName ?? '未設定'}
-                  <br />
                   <strong>時給:</strong>{' '}
                   {job.hourlywage?.toLocaleString() ?? 'N/A'}円～
                   <br />

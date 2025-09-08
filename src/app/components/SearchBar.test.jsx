@@ -51,6 +51,7 @@ describe('SearchBar', () => {
     const occupationSelect = screen.getByLabelText('業種');
 
     // ユーザーが各項目を選択する操作をシミュレート
+    // await を付けるのは React state 更新と DOM 反映を待つ安全策
     await user.selectOptions(lineSelect, '1');
     await user.selectOptions(wageSelect, '1200');
     await user.selectOptions(occupationSelect, '1');
