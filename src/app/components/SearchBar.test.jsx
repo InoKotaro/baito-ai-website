@@ -18,7 +18,7 @@ const mockWages = [{ id: '1', value: '1200', label: '1200円' }];
 const mockOccupations = [{ id: '1', occupationname: '接客・サービス' }];
 
 describe('SearchBar', () => {
-  it('初期状態で3つのセレクトボックスと検索ボタンが表示される', () => {
+  test('初期状態で3つのセレクトボックスと検索ボタンが表示される', () => {
     render(
       <SearchBar
         lines={mockLines}
@@ -36,7 +36,7 @@ describe('SearchBar', () => {
     expect(screen.getByRole('button', { name: '検索' })).toBeInTheDocument();
   });
 
-  it('ユーザーが各項目を選択すると、フォームの状態が更新される', async () => {
+  test('ユーザーが各項目を選択すると、フォームの状態が更新される', async () => {
     const user = userEvent.setup();
     render(
       <SearchBar
@@ -62,7 +62,7 @@ describe('SearchBar', () => {
     expect(occupationSelect).toHaveValue('1');
   });
 
-  it('検索ボタンをクリックすると、選択した値でonSearchが呼び出される', async () => {
+  test('検索ボタンをクリックすると、選択した値でonSearchが呼び出される', async () => {
     const user = userEvent.setup();
     const mockOnSearch = jest.fn(); // onSearch用のモック関数
 
@@ -99,7 +99,7 @@ describe('SearchBar', () => {
     });
   });
 
-  it('何も選択せずに検索ボタンをクリックすると、空の値でonSearchが呼び出される', async () => {
+  test('何も選択せずに検索ボタンをクリックすると、空の値でonSearchが呼び出される', async () => {
     const user = userEvent.setup();
     const mockOnSearch = jest.fn();
 
