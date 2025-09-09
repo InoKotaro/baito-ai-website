@@ -35,7 +35,8 @@ const getJobById = async (id) => {
 };
 
 export default function ApplyPage({ params }) {
-  const { id } = params;
+  // const { id } = params;は非推奨
+  const { id } = React.use(params);
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);

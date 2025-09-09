@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -9,6 +10,7 @@ export default function ApplyButton({ jobId }) {
   const router = useRouter();
   const [isApplied, setIsApplied] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // New state
 
   // 応募済みかどうかをチェック
   useEffect(() => {
@@ -19,10 +21,12 @@ export default function ApplyButton({ jobId }) {
         } = await supabase.auth.getUser();
 
         if (!user) {
-          setIsLoading(false);
-          setIsApplied(false); // ログインしていない場合は応募していないと仮定
+          setIsLoggedIn(false); // Set logged in status
+          setIsApplied(false);
           return;
         }
+
+        setIsLoggedIn(true); // Set logged in status
 
         // UserテーブルからユーザーIDを取得
         const { data: dbUser } = await supabase
@@ -43,26 +47,23 @@ export default function ApplyButton({ jobId }) {
 
             if (appError) {
               if (appError.code === 'PGRST116') {
-                // 行が見つからない（応募していない）
                 setIsApplied(false);
               } else {
                 console.error('応募状況確認エラー:', appError);
-                // エラーの場合は応募していないと仮定
                 setIsApplied(false);
               }
             } else {
-              // 応募済み
               setIsApplied(true);
             }
           } catch (error) {
             console.error('応募状況確認エラー:', error);
-            // エラーの場合は応募していないと仮定
             setIsApplied(false);
           }
         }
       } catch (error) {
         console.error('応募状況確認エラー:', error);
         setIsApplied(false);
+        setIsLoggedIn(false);
       } finally {
         setIsLoading(false);
       }
@@ -76,7 +77,7 @@ export default function ApplyButton({ jobId }) {
     e.preventDefault();
 
     if (isApplied) {
-      return; // 応募済みの場合は何もしない
+      return;
     }
 
     router.push(`/apply/${jobId}`);
@@ -90,6 +91,18 @@ export default function ApplyButton({ jobId }) {
       >
         読み込み中
       </button>
+    );
+  }
+
+  // New render logic
+  if (!isLoggedIn) {
+    return (
+      <Link
+        href="/login"
+        className="whitespace-nowrap rounded-lg bg-orange-500 px-8 py-4 font-bold text-white transition-colors hover:bg-orange-600"
+      >
+        ログインして応募
+      </Link>
     );
   }
 
