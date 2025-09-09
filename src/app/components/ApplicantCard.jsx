@@ -4,7 +4,6 @@ export default function ApplicantCard({ applicant }) {
   return (
     <div className="mb-4 rounded-lg border bg-white p-4 shadow-sm transition-shadow duration-200">
       <div className="flex items-start">
-        {/* アバターは将来的に実装 */}
         <div className="mr-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-300 text-2xl font-bold text-white">
           {applicant.name.charAt(0)}
         </div>

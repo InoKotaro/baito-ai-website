@@ -32,7 +32,7 @@ export default function JobPortfolioSite() {
     if (form.line) query = query.eq('lineid', form.line);
     if (form.wage) query = query.gte('hourlywage', Number(form.wage));
     if (form.occupation) query = query.eq('occupationid', form.occupation);
-    query = query.order('id', { ascending: false }); // Add order here
+    query = query.order('id', { ascending: false }); // 新しい順に並び替え
     const { data, error } = await query;
     if (error) {
       setError('求人情報の取得に失敗しました。');
