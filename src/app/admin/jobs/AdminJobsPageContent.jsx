@@ -95,7 +95,7 @@ export default function AdminJobsPageContent() {
               )}
 
               {allAdminJobs.length === 0 ? (
-                <div className="py-12 text-center">
+                <div className="pb-7 text-center">
                   <p className="mb-4 text-lg text-gray-600">
                     まだ求人が登録されていません
                   </p>
