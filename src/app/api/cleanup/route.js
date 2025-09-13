@@ -11,7 +11,7 @@ export async function GET() {
   try {
     let deletedUsers = 0;
     let deletedJobs = 0;
-    let deletedFiles = 0; // 追加
+    let deletedFiles = 0;
     let remainingUsers = null;
 
     console.log('=== クリーンアップ処理開始 ===');
