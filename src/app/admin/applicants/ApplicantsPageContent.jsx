@@ -104,7 +104,7 @@ export default function ApplicantsPageContent() {
             )}
 
             {allApplicants.length === 0 ? (
-              <div className="py-12 text-center">
+              <div className="pb-12 text-center">
                 <p className="text-lg text-gray-600">まだ応募者がいません</p>
               </div>
             ) : (
