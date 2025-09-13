@@ -11,7 +11,7 @@ import { supabase } from '@/lib/supabaseClient'; // supabase is needed for both 
 export default function MyPage() {
   const PROTECTED_EMAILS = [
     'tester@example.com',
-    'demouser@example.com',
+    'user@example.com',
     'demo@example.com',
   ];
 
@@ -48,7 +48,9 @@ export default function MyPage() {
       setError('');
       setInfo('');
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
         const accessToken = session?.access_token;
 
         if (!accessToken) {
@@ -90,13 +92,15 @@ export default function MyPage() {
     }
     if (!confirm('本当にアカウントを削除しますか？この操作は取り消せません。'))
       return;
-    
+
     setDeleteBusy(true);
     try {
       const authUserId = user?.id;
-      if (!authUserId) throw new Error("User not found.");
+      if (!authUserId) throw new Error('User not found.');
 
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       const accessToken = session?.access_token;
 
       const res = await fetch('/api/delete-account', {
@@ -115,7 +119,6 @@ export default function MyPage() {
 
       await supabase.auth.signOut();
       router.replace('/login');
-
     } catch (e) {
       console.error('Delete account error:', e);
       setError(e.message);
@@ -131,7 +134,8 @@ export default function MyPage() {
     >
       <Header isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
       <main className="mx-auto mt-8 w-full max-w-4xl flex-grow px-4">
-        <h1 className="mb-6 text-3xl font-bold text-blue-800">マイページ</h1>
+        <h1 className="text-3xl font-bold text-blue-800">マイページ</h1>
+        <p className="mb-6">※デモ用アカウントは変更・削除できません</p>
         {loading ? (
           <div className="rounded-lg bg-white p-6 text-center shadow-md">
             読み込み中
@@ -162,9 +166,15 @@ export default function MyPage() {
               <div className="flex justify-center">
                 <button
                   onClick={handleUpdateNameClick}
-                  disabled={busy || (dbUser && name === dbUser.name) || PROTECTED_EMAILS.includes(user?.email)}
+                  disabled={
+                    busy ||
+                    (dbUser && name === dbUser.name) ||
+                    PROTECTED_EMAILS.includes(user?.email)
+                  }
                   className={`rounded bg-orange-500 px-6 py-2 font-bold text-white ${
-                    busy || (dbUser && name === dbUser.name) || PROTECTED_EMAILS.includes(user?.email)
+                    busy ||
+                    (dbUser && name === dbUser.name) ||
+                    PROTECTED_EMAILS.includes(user?.email)
                       ? 'cursor-not-allowed opacity-60'
                       : 'hover:bg-orange-600'
                   }`}
@@ -180,13 +190,13 @@ export default function MyPage() {
               </h2>
               <p className="mb-4 text-sm text-gray-600">
                 応募データを含むアカウント情報を削除します。
-                <br />
-                （デモ用アカウントを除く）
               </p>
               <div className="flex justify-center">
                 <button
                   onClick={handleDeleteAccount}
-                  disabled={deleteBusy || PROTECTED_EMAILS.includes(user?.email)}
+                  disabled={
+                    deleteBusy || PROTECTED_EMAILS.includes(user?.email)
+                  }
                   className={`rounded bg-red-600 px-6 py-2 font-bold text-white ${
                     deleteBusy || PROTECTED_EMAILS.includes(user?.email)
                       ? 'cursor-not-allowed opacity-60'
