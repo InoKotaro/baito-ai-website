@@ -28,7 +28,7 @@ jest.mock('next/image', () => {
 });
 
 describe('AdminHeader', () => {
-  const mockAdmin = { name: 'デモ' };
+  const mockAdmin = { name: 'デモ株式会社' };
   const mockLogout = jest.fn();
 
   beforeEach(() => {
