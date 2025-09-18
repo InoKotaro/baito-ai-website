@@ -1,6 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
+import prisma from '@/lib/prisma';
+
 // サーバー専用キーでクライアント作成（サービスロールキー必須）
 const supabase = createClient(
   process.env.SUPABASE_URL, // サーバー用 URL
@@ -10,6 +12,7 @@ const supabase = createClient(
 export async function GET() {
   try {
     let deletedUsers = 0;
+    let deletedPrismaUsers = 0;
     let deletedJobs = 0;
     let deletedFiles = 0;
     let remainingUsers = null;
@@ -198,7 +201,42 @@ export async function GET() {
     }
 
     // -------------------------------
-    // 2. Jobテーブル 35個目以降削除
+    // 2. Prisma Userテーブル 3個目以降削除
+    // -------------------------------
+    try {
+      console.log('Prisma Userテーブルのレコード一覧を取得中');
+      const prismaUsers = await prisma.user.findMany({
+        orderBy: {
+          id: 'asc',
+        },
+      });
+
+      console.log(`取得したPrisma User数: ${prismaUsers.length}`);
+
+      if (prismaUsers.length > 3) {
+        const usersToDelete = prismaUsers.slice(3);
+        const userIdsToDelete = usersToDelete.map((user) => user.id);
+        console.log(`削除対象のPrisma User数: ${usersToDelete.length}`);
+        console.log('削除対象Prisma User ID:', userIdsToDelete);
+
+        const deleteResult = await prisma.user.deleteMany({
+          where: {
+            id: {
+              in: userIdsToDelete,
+            },
+          },
+        });
+        deletedPrismaUsers = deleteResult.count;
+        console.log(`Prisma User削除成功: ${deletedPrismaUsers}件`);
+      } else {
+        console.log('削除対象のPrisma Userはありません（3件以下）');
+      }
+    } catch (prismaError) {
+      console.error('Prisma User処理全体エラー:', prismaError);
+    }
+
+    // -------------------------------
+    // 3. Jobテーブル 35個目以降削除
     // -------------------------------
     console.log('Jobテーブルのレコード一覧を取得中');
     const { data: jobs, error: jobError } = await supabase
@@ -243,7 +281,7 @@ export async function GET() {
     }
 
     // -------------------------------
-    // 3. Supabase Storage 35個目以降削除
+    // 4. Supabase Storage 35個目以降削除
     // -------------------------------
     const BUCKET_NAME = 'BaitoAI-images';
     console.log(`Storageバケット「${BUCKET_NAME}」のファイル一覧を取得中`);
@@ -284,25 +322,26 @@ export async function GET() {
     }
 
     console.log(`=== クリーンアップ処理完了 ===`);
-    console.log(`削除されたユーザー: ${deletedUsers}件`);
+    console.log(`削除されたAuthユーザー: ${deletedUsers}件`);
+    console.log(`削除されたPrisma User: ${deletedPrismaUsers}件`);
     console.log(`削除されたJob: ${deletedJobs}件`);
-    console.log(`削除されたファイル: ${deletedFiles}件`); 
+    console.log(`削除されたファイル: ${deletedFiles}件`);
 
     // 削除後の確認処理
     try {
-      console.log('削除後のユーザー数を確認中...');
-      const { data: remainingUsersData, error: remainingError } = 
+      console.log('削除後のAuthユーザー数を確認中...');
+      const { data: remainingUsersData, error: remainingError } =
         await supabase.auth.admin.listUsers();
 
       if (remainingError) {
-        console.error('削除後のユーザー数確認エラー:', remainingError);
+        console.error('削除後のAuthユーザー数確認エラー:', remainingError);
       } else {
-        remainingUsers = remainingUsersData; 
+        remainingUsers = remainingUsersData.users;
         console.log(
-          `削除後の残存ユーザー数: ${remainingUsers ? remainingUsers.length : 0}`,
+          `削除後の残存Authユーザー数: ${remainingUsers ? remainingUsers.length : 0}`,
         );
         if (remainingUsers && remainingUsers.length > 0) {
-          console.log('残存ユーザー:');
+          console.log('残存Authユーザー:');
           remainingUsers.forEach((user, index) => {
             console.log(`  ${index + 1}. ID: ${user.id}, Email: ${user.email}`);
           });
@@ -315,10 +354,11 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       message: 'Cleanup completed',
-      deletedUsers,
+      deletedAuthUsers: deletedUsers,
+      deletedPrismaUsers,
       deletedJobs,
       deletedFiles,
-      remainingUsers: remainingUsers ? remainingUsers.length : 0,
+      remainingAuthUsers: remainingUsers ? remainingUsers.length : 0,
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
