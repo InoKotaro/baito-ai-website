@@ -41,7 +41,7 @@ model JobApplication {   //応募履歴
   appliedAt DateTime @default(now())
 
   userId  Int
-  user    User   @relation(fields: [userId], references: [id])
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   jobId   Int
   job     Job    @relation(fields: [jobId], references: [id])

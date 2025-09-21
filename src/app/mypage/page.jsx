@@ -135,7 +135,9 @@ export default function MyPage() {
       <Header isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
       <main className="mx-auto mt-8 w-full max-w-4xl flex-grow px-4">
         <h1 className="text-3xl font-bold text-blue-800">マイページ</h1>
-        <p className="mb-6">※デモ用アカウントは変更・削除できません</p>
+        {user && PROTECTED_EMAILS.includes(user.email) && (
+          <p className="mb-6">※デモ用アカウントは変更・削除できません</p>
+        )}
         {loading ? (
           <div className="rounded-lg bg-white p-6 text-center shadow-md">
             読み込み中
