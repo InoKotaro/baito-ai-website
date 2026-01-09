@@ -14,8 +14,6 @@ https://baito-ai-website.vercel.app/
 
 ### 推奨確認方法 2パターン
 
-※PC / スマホ両方でレスポンシブ表示を確認できます
-
 - ご自身でアカウントを新規作成（ユーザー名変更、アカウント削除可能）<br>
 
   または
@@ -24,8 +22,13 @@ https://baito-ai-website.vercel.app/
   【デモユーザー】 （一般ユーザーとして求人へ応募可能）
   - Email: user@example.com
   - Password: demo1234
+    <br>
+    <br>
 
   【デモ株式会社】 （企業として求人を作成可能）
+
+   ※ 企業側ページは https://baito-ai-website.vercel.app/admin からお入りください。
+
   - Email: demo@example.com
   - Password: demo1234
 
